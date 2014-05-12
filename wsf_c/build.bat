@@ -9,7 +9,7 @@ cd axis2c\build
 if exist axis2c-bin-%AXIS2C_VERSION%-win32 rmdir /s /q axis2c-bin-%AXIS2C_VERSION%-win32
 cd win32
 nmake dist AUTOCONF=..\..\..\configure.in
-cd ..\axis2c-bin-1.6.0-win32\samples\
+cd ..\axis2c-bin-%AXIS2C_VERSION%-win32\samples\
 ren src axis2c
 mkdir src
 move axis2c src\

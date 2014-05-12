@@ -63,12 +63,14 @@ typedef enum ws_input_types
 #define WSF_WSMESSAGE "WSMESSAGE"
 
 #define WSF_MESSAGE_STR "str"
+#define WSF_MESSAGE_REQUEST_SOAP_ENVELOPE_STR "soapEnvelopeStr"
 
 #define WSF_ACTIONS      "actions"
 #define WSF_OPERATIONS   "operations"
 #define WSF_OP_MEP       "opMEP"
 #define WSF_OP_PARAMS    "opParams"
 #define WSF_WSDL         "wsdl"
+#define WSF_XSD			 "xsd"
 #define WSF_OMIT_WSDL    "omitProcesswsdl"
 #define WSF_CLASSMAP     "classmap"
 #define WSF_CLASSES      "classes"
@@ -144,6 +146,10 @@ typedef enum ws_input_types
 #define WSF_HTTP_AUTH_PASSWORD      "httpAuthPassword"
 #define WSF_HTTP_AUTH_TYPE          "httpAuthType"
 #define WSF_PHP_AUTH_TYPE_BASIC			"Basic"
+
+#define WSF_WSDL_CA_CERT			"CACert"
+#define WSF_WSDL_CLIENT_CERT		"clientCert"
+#define WSF_WSDL_PASSPHRASE			"passphrase"
 
 /** proxy authentication */
 #define WSF_PROXY_AUTH_USERNAME      "proxyAuthUsername"
