@@ -1,8 +1,22 @@
+dnl Licensed to the Apache Software Foundation (ASF) under one or more
+dnl contributor license agreements.  See the NOTICE file distributed with
+dnl this work for additional information regarding copyright ownership.
+dnl The ASF licenses this file to You under the Apache License, Version 2.0
+dnl (the "License"); you may not use this file except in compliance with
+dnl the License.  You may obtain a copy of the License at
+dnl 
+dnl   http://www.apache.org/licenses/LICENSE-2.0
+dnl 
+dnl Unless required by applicable law or agreed to in writing, software
+dnl distributed under the License is distributed on an "AS IS" BASIS,
+dnl WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+dnl See the License for the specific language governing permissions and
+dnl limitations under the License.
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
 
-AC_INIT(axis2_util-src, 1.6.0)
+AC_INIT(axis2_util-src, 1.7.0)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
@@ -10,7 +24,6 @@ AC_PREFIX_DEFAULT(/usr/local/axis2_util)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
@@ -45,18 +58,38 @@ fi
 dnl Checks for libraries.
 AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(z, inflate)
+AC_CHECK_LIB(socket, socket)
+AC_CHECK_LIB(pthread, pthread_key_create)
 
-#CFLAGS="$CFLAGS -ansi -Wall -D_LARGEFILE64_SOURCE -Wno-implicit-function-declaration"
+dnl This can be removed when the ftime call in 
+dnl ./util/src/platforms/unix/date_time_util_unix.c 
+dnl is changed to call gettimeofday
+AC_CHECK_LIB(compat, ftime)
+
 CFLAGS="$CFLAGS -D_LARGEFILE64_SOURCE"
 if test "$GCC" = "yes"; then
     CFLAGS="$CFLAGS -ansi -Wall -Wno-implicit-function-declaration -D_GNU_SOURCE"
 fi
-LDFLAGS="$LDFLAGS -lpthread"
+
+AC_MSG_CHECKING(whether to set -Werror)
+AC_ARG_ENABLE(werror, [  --disable-werror      do not treat warnings as errors during build],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -Werror"
+    ;;
+  esac ],
+)
 
 dnl Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdio.h stdlib.h string.h])
 AC_CHECK_HEADERS([sys/socket.h])
+AC_CHECK_HEADERS([sys/sockio.h])
+AC_CHECK_HEADERS([getopt.h])
 AC_CHECK_HEADERS([net/if.h], [], [],
 [#include <stdio.h>
 #if STDC_HEADERS
@@ -99,6 +132,7 @@ dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
 dnl AC_FUNC_REALLOC
 #AC_CHECK_FUNCS([memmove])
+AC_CHECK_FUNCS(getifaddrs)
 
 # System-dependent adjustments.
 cygwin=no
@@ -128,11 +162,11 @@ cygwin)
   ;;
 darwin*)
   darwin=yes
-  if test x"$GCC" = xyes
-  then
-    CFLAGS="$CFLAGS -Wno-long-double"
-    CXXFLAGS="$CXXFLAGS -Wno-long-double"
-  fi
+dnl   if test x"$GCC" = xyes
+dnl  then
+dnl    CFLAGS="$CFLAGS -Wno-long-double"
+dnl    CXXFLAGS="$CXXFLAGS -Wno-long-double"
+dnl  fi
   ;;
 solaris*)
   solaris=yes
@@ -166,8 +200,25 @@ AC_ARG_ENABLE(guththila, [  --enable-guththila    build guththila xml parser lib
   GUTHTHILA_DIR=""
 )
 
+AC_MSG_CHECKING(whether to enable trace)
+AC_ARG_ENABLE(trace, [  --enable-trace    
+                          enable logging trace messages useful when debugging (default=no)],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    CFLAGS="$CFLAGS"
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -DAXIS2_TRACE"
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
+  CFLAGS="$CFLAGS"
+)
+
 AC_MSG_CHECKING(whether to build tests)
-AC_ARG_ENABLE(tests, [  --enable-tests    build tests. default=no],
+AC_ARG_ENABLE(tests, [  --enable-tests    build tests. default=yes],
 [ case "${enableval}" in
   yes)
     AC_MSG_RESULT(yes)
@@ -218,7 +269,7 @@ CFLAGS="$CFLAGS $GUTHTHILA_CFLAGS"
 UTILINC=$axis2_utilinc
 ZLIBINC=$zlibinc
 ZLIBLIBS=$zliblibs
-VERSION_NO="4:0:4"
+VERSION_NO="7:0:7"
 
 AC_SUBST(VERSION_NO)
 AC_SUBST(UTILINC)
@@ -233,7 +284,6 @@ AC_CONFIG_FILES([Makefile \
     src/Makefile \
     src/platforms/unix/Makefile \
     src/minizip/Makefile \
-    src/stomp/Makefile \
     include/Makefile \
     test/Makefile \
     test/util/Makefile \

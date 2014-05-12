@@ -57,7 +57,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">endpoint_ref</font>&nbsp;=&nbsp;<font color="#000000">axis2_endpoint_ref_create</font>(<font color="#000000">env</font>,&nbsp;<font color="#000000">address</font>);<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">axis2_options_set_to</font>(<font color="#000000">options</font>,&nbsp;<font color="#000000">env</font>,&nbsp;<font color="#000000">endpoint_ref</font>);<br />
 <br />
-&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">client_home</font>&nbsp;=&nbsp;<font color="#000000">AXIS2_GETENV</font>(<font color="#ff0000">"WSFC_HOME"</font>);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">client_home</font>&nbsp;=&nbsp;<font color="#000000">AXIS2_GETENV</font>(<font color="#ff0000">"AXIS2C_HOME"</font>);<br />
 &nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000"><b>if</b></font>&nbsp;(!<font color="#000000">client_home</font> || !<font color="#000000">strcmp</font>(<font color="#000000">client_home</font>,&nbsp;<font color="#ff0000">""</font>))<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">client_home</font>&nbsp;=&nbsp;<font color="#ff0000">"../.."</font>;<br />
 <br />

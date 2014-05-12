@@ -313,10 +313,14 @@ axiom_node_detach_without_namespaces(
         axiom_stax_builder_set_lastnode(om_node->builder, env, lastnode);
     }
 
+    /* If the node is the owner of the builder, keep a reference to the builder
+     * the builder will be freed when this node is destroyed*/
+    if(!om_node->own_builder)
+        om_node->builder = NULL;
+
     om_node->parent = NULL;
     om_node->prev_sibling = NULL;
     om_node->next_sibling = NULL;
-    om_node->builder = NULL;
     return om_node;
 }
 
@@ -1129,6 +1133,17 @@ axiom_node_get_previous_sibling(
 }
 
 AXIS2_EXTERN axiom_node_t *AXIS2_CALL
+axiom_node_get_previous_sibling_element(
+    axiom_node_t * om_node,
+    const axutil_env_t * env)
+{
+    axiom_node_t * result = axiom_node_get_previous_sibling( om_node, env );
+    while ( result && axiom_node_get_node_type(result, env) != AXIOM_ELEMENT )
+        result = axiom_node_get_previous_sibling( result, env );
+    return result;
+}
+
+AXIS2_EXTERN axiom_node_t *AXIS2_CALL
 axiom_node_get_next_sibling(
     axiom_node_t * om_node,
     const axutil_env_t * env)
@@ -1159,6 +1174,18 @@ axiom_node_get_next_sibling(
 
     return om_node->next_sibling;
 }
+
+AXIS2_EXTERN axiom_node_t *AXIS2_CALL
+axiom_node_get_next_sibling_element(
+    axiom_node_t * om_node,
+    const axutil_env_t * env)
+{
+    axiom_node_t * result = axiom_node_get_next_sibling( om_node, env );
+    while ( result && axiom_node_get_node_type(result, env) != AXIOM_ELEMENT )
+        result = axiom_node_get_next_sibling( result, env );
+    return result;
+}
+
 
 AXIS2_EXTERN axiom_types_t AXIS2_CALL
 axiom_node_get_node_type(

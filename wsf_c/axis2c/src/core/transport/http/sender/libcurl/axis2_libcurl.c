@@ -118,7 +118,7 @@ axis2_libcurl_send(
     unsigned int buffer_size = 0;
     int content_length = -1;
     axis2_char_t *content_type = NULL;
-    axis2_char_t *content_len = AXIS2_HTTP_HEADER_CONTENT_LENGTH_;
+    /*axis2_char_t *content_len = AXIS2_HTTP_HEADER_CONTENT_LENGTH_; */
     const axis2_char_t *char_set_enc = NULL;
     axis2_char_t *content = AXIS2_HTTP_HEADER_CONTENT_TYPE_;
     axis2_char_t *soap_action_header = AXIS2_HTTP_HEADER_SOAP_ACTION_;
@@ -146,7 +146,7 @@ axis2_libcurl_send(
 
     handler = data->handler;
     curl_easy_reset(handler);
-    curl_easy_setopt(handler, CURLOPT_ERRORBUFFER, &data->errorbuffer);
+    curl_easy_setopt(handler, CURLOPT_ERRORBUFFER, data->errorbuffer);
     headers = curl_slist_append(headers, AXIS2_HTTP_HEADER_USER_AGENT_AXIS2C);
     headers = curl_slist_append(headers, AXIS2_HTTP_HEADER_ACCEPT_);
     headers = curl_slist_append(headers, AXIS2_HTTP_HEADER_EXPECT_);
@@ -428,7 +428,7 @@ axis2_libcurl_send(
             }
             else
             {
-                content_type = AXIS2_HTTP_HEADER_ACCEPT_TEXT_XML;
+                content_type = axutil_strdup(env,AXIS2_HTTP_HEADER_ACCEPT_TEXT_XML);
             }
 
         }

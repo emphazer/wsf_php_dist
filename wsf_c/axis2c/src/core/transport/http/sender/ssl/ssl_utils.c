@@ -40,10 +40,9 @@ axis2_ssl_utils_initialize_ctx(
     axis2_char_t * key_file,
     axis2_char_t * ssl_pp)
 {
-    SSL_METHOD *meth = NULL;
     SSL_CTX *ctx = NULL;
     axis2_char_t *ca_file = server_cert;
-
+	SSL_METHOD *meth;
     if (!ca_file)
     {
         AXIS2_LOG_INFO(env->log, "[ssl client] CA certificate not specified");
@@ -56,13 +55,21 @@ axis2_ssl_utils_initialize_ctx(
         /* Global system initialization */
         SSL_library_init();
         SSL_load_error_strings();
+	OpenSSL_add_all_algorithms();
 
         /* An error write context */
         bio_err = BIO_new_fp(stderr, BIO_NOCLOSE);
     }
 
     /* Create our context */
-    meth = (SSL_METHOD*)SSLv23_method();
+ # if defined OPENSSL_VERSION_NUMBER && (OPENSSL_VERSION_NUMBER >= 0x1000000fL)
+	
+	meth = SSLv23_method();
+ # else
+	
+	meth = SSLv23_method();
+	
+ # endif
     ctx = SSL_CTX_new(meth);
 
     /* Load our keys and certificates
@@ -106,7 +113,7 @@ key file %s and server cert %s", key_file, server_cert);
     }
 
     /* Load the CAs we trust */
-    if (!(SSL_CTX_load_verify_locations(ctx, ca_file, 0)))
+    if (!(SSL_CTX_load_verify_locations(ctx, ca_file, 0) ||  (!SSL_CTX_set_default_verify_paths(ctx))))
     {
         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI,
             "[ssl client] Loading CA certificate failed, \
@@ -214,7 +221,10 @@ axis2_ssl_utils_cleanup_ssl(
 
     if (ssl)
     {
-        SSL_shutdown(ssl);
+        if(SSL_shutdown(ssl)==0)
+		{
+			SSL_free(ssl);
+		}
     }
     if (ctx)
     {

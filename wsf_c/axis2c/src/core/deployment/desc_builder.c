@@ -973,8 +973,27 @@ axis2_desc_builder_load_msg_recv(
         msg_recv_dll_name = axutil_dll_desc_create_platform_specific_dll_name(dll_desc, env,
             class_name);
         repos_name = axis2_dep_engine_get_repos_path(desc_builder->engine, env);
-        temp_path = axutil_stracat(env, repos_name, AXIS2_PATH_SEP_STR);
-        temp_path2 = axutil_stracat(env, temp_path, AXIS2_LIB_FOLDER);
+        if (!repos_name) 
+        {
+            /* If we rely solely on an axis2.xml repo then the engine still expects
+             * to find a message receiver shared lib in a "lib" dir off some unspecified repo folder;
+             * So we must tell it to instead look at what we specified for a libDir param in the axis2.xml */
+            axutil_param_t* lib_dir_param = axis2_conf_get_param(conf, env, AXIS2_LIB_DIR);
+            if (lib_dir_param) 
+            {
+                temp_path2 = (axis2_char_t *) axutil_strdup(env, (axis2_char_t *)axutil_param_get_value(lib_dir_param, env));
+            }
+            else 
+            {
+                AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Unable to resolve lib dir for deployment engine");
+                return NULL;
+            }
+        }
+        else 
+        {
+            temp_path = axutil_stracat(env, repos_name, AXIS2_PATH_SEP_STR);
+            temp_path2 = axutil_stracat(env, temp_path, AXIS2_LIB_FOLDER);
+        }
         temp_path3 = axutil_stracat(env, temp_path2, AXIS2_PATH_SEP_STR);
         dll_name = axutil_stracat(env, temp_path3, msg_recv_dll_name);
         AXIS2_FREE(env->allocator, temp_path);
@@ -1135,13 +1154,13 @@ axis2_process_policy_reference_elements(
         node = axiom_children_qname_iterator_next(iterator, env);
         if(node)
         {
+            /* TODO: add neethi_engine_get_policy_reference 
             axiom_element_t *element = NULL;
             neethi_reference_t *reference = NULL;
 
             element = axiom_node_get_data_element(node, env);
-            /* TODO: add neethi_engine_get_policy_reference
              reference = neethi_engine_get_policy_reference(env, node, element); */
-            axis2_policy_include_add_policy_reference_element(policy_include, env, type, reference);
+            axis2_policy_include_add_policy_reference_element(policy_include, env, type, NULL);
         }
     }
     return AXIS2_SUCCESS;

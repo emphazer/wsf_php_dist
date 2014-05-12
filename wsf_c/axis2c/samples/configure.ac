@@ -1,3 +1,17 @@
+dnl Licensed to the Apache Software Foundation (ASF) under one or more
+dnl contributor license agreements.  See the NOTICE file distributed with
+dnl this work for additional information regarding copyright ownership.
+dnl The ASF licenses this file to You under the Apache License, Version 2.0
+dnl (the "License"); you may not use this file except in compliance with
+dnl the License.  You may obtain a copy of the License at
+dnl 
+dnl   http://www.apache.org/licenses/LICENSE-2.0
+dnl 
+dnl Unless required by applicable law or agreed to in writing, software
+dnl distributed under the License is distributed on an "AS IS" BASIS,
+dnl WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+dnl See the License for the specific language governing permissions and
+dnl limitations under the License.
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
@@ -48,8 +62,21 @@ AC_CHECK_LIB(dl, dlopen)
 
 CFLAGS="$CFLAGS -D_LARGEFILE64_SOURCE"
 if test "$GCC" = "yes"; then
-       CFLAGS="$CFLAGS -ansi -Wall  -Wno-implicit-function-declaration -g -D_GNU_SOURCE"
+       CFLAGS="$CFLAGS -ansi -Werror -Wno-implicit-function-declaration -g -D_GNU_SOURCE"
 fi
+
+AC_MSG_CHECKING(whether to set -Werror)
+AC_ARG_ENABLE(werror, [  --disable-werror     do not treat warnings as errors during build],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -Werror"
+    ;;
+  esac ],
+)
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -79,6 +106,49 @@ AC_ARG_ENABLE(diclient, [  --enable-diclient    build diclient. default=no],
   esac ],
   AC_MSG_RESULT(yes)
   DICLIENT_DIR=""
+)
+
+AC_MSG_CHECKING(whether to build heimdal ntlm wrapper library)
+AC_ARG_ENABLE(heimdal, [  --enable-heimdal    
+                          build heimdal ntlm library wrapper (default=no)],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    NTLM_WRAPPER_DIR=""
+    NTLM_DIR=""
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    NTLM_WRAPPER_DIR="heimdal"
+    NTLM_DIR="ntlm"
+    #PKG_CHECK_MODULES(HEIMDAL, heimdal-1.4)
+    CFLAGS="$CFLAGS -DAXIS2_HEIMDAL_ENABLED -DAXIS2_NTLM_ENABLED"
+    CPPFLAGS="$CPPFLAGS $NTLM_CFLAGS -DAXIS2_HEIMDAL_ENABLED -DAXIS2_NTLM_ENABLED"
+    LDFLAGS="$LDFLAGS $NTLM_LDFLAGS"
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build libntlm ntlm wrapper library)
+AC_ARG_ENABLE(libntlm, [  --enable-libntlm    
+                          build libntlm ntlm library wrapper (default=no)],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    NTLM_WRAPPER_DIR=""
+    NTLM_DIR=""
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    NTLM_WRAPPER_DIR="libntlm"
+    NTLM_DIR="ntlm"
+    CFLAGS="$CFLAGS -DAXIS2_LIBNTLM_ENABLED -DAXIS2_NTLM_ENABLED"
+    CPPFLAGS="$CPPFLAGS $NTLM_CFLAGS -DAXIS2_LIBNTLM_ENABLED -DAXIS2_NTLM_ENABLED"
+    LDFLAGS="$LDFLAGS $NTLM_LDFLAGS"
+    ;;
+  esac ],
+  AC_MSG_RESULT(no)
 )
 
 AC_MSG_CHECKING(To Use Axis2 C . This is a compulsory module to build Axis2 C samples)
@@ -119,6 +189,7 @@ AC_SUBST(APRINC)
 AC_SUBST(AXIS2INC)
 AC_SUBST(GUTHTHILA_DIR)
 AC_SUBST(GUTHTHILA_LIBS)
+AC_SUBST(NTLM_DIR)
 AC_SUBST(DICLIENT_DIR)
 
 AC_CONFIG_FILES([Makefile \
@@ -148,6 +219,7 @@ AC_CONFIG_FILES([Makefile \
     client/amqp/mtom/Makefile \
     client/amqp/mtom/resources/Makefile \
     client/session/Makefile \
+    client/ntlm/Makefile \
     user_guide/Makefile \
     user_guide/clients/Makefile \
     mtom_caching_callback/Makefile \

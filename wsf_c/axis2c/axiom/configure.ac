@@ -1,16 +1,30 @@
+dnl Licensed to the Apache Software Foundation (ASF) under one or more
+dnl contributor license agreements.  See the NOTICE file distributed with
+dnl this work for additional information regarding copyright ownership.
+dnl The ASF licenses this file to You under the Apache License, Version 2.0
+dnl (the "License"); you may not use this file except in compliance with
+dnl the License.  You may obtain a copy of the License at
+dnl 
+dnl   http://www.apache.org/licenses/LICENSE-2.0
+dnl 
+dnl Unless required by applicable law or agreed to in writing, software
+dnl distributed under the License is distributed on an "AS IS" BASIS,
+dnl WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+dnl See the License for the specific language governing permissions and
+dnl limitations under the License.
 dnl run autogen.sh to generate the configure script.
 
 AC_PREREQ(2.59)
 
-AC_INIT(axis2_axiom-src, 1.6.0)
+AC_INIT(axis2_axiom-src, 1.7.0)
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE
 AC_PREFIX_DEFAULT(/usr/local/axis2_axiom)
+m4_include(pkg.m4)
 
 dnl Checks for programs.
 AC_PROG_CC
-AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_LIBTOOL
 AC_PROG_INSTALL
@@ -46,13 +60,24 @@ dnl Checks for libraries.
 AC_CHECK_LIB(dl, dlopen)
 AC_CHECK_LIB(z, inflate)
 
-#CFLAGS="$CFLAGS -ansi -Wall -D_LARGEFILE64_SOURCE -Wno-implicit-function-declaration"
 CFLAGS="$CFLAGS -D_LARGEFILE64_SOURCE"
 if test "$GCC" = "yes"; then
-    CFLAGS="$CFLAGS -ansi  -Wall -Wno-implicit-function-declaration -D_GNU_SOURCE"
+    CFLAGS="$CFLAGS -ansi -Wall -Wno-implicit-function-declaration "
 fi
 
-LDFLAGS="$LDFLAGS -lpthread"
+AC_MSG_CHECKING(whether to set -Werror)
+AC_ARG_ENABLE(werror, [  --disable-werror  do not treat warnings as errors during build],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    CFLAGS="$CFLAGS -Werror"
+    ;;
+  esac ],
+)
+
 
 dnl Checks for header files.
 AC_HEADER_STDC
@@ -78,6 +103,23 @@ dnl Checks for library functions.
 dnl AC_FUNC_MALLOC
 dnl AC_FUNC_REALLOC
 #AC_CHECK_FUNCS([memmove])
+
+AC_MSG_CHECKING(whether to build xpath)
+AC_ARG_ENABLE(xpath, [  --enable-xpath    build xpath. default=yes],
+[ case "${enableval}" in
+  no)
+    AC_MSG_RESULT(no)
+    ;;
+  *)
+    AC_MSG_RESULT(yes)
+    XPATH_DIR="xpath"
+
+    ;;
+  esac ],
+  AC_MSG_RESULT(yes)
+  XPATH_DIR="xpath"
+)
+
 
 AC_MSG_CHECKING(whether to build guththila xml parser library)
 AC_ARG_ENABLE(guththila, [  --enable-guththila    build guththila xml parser library wrapper. default=yes],
@@ -105,27 +147,11 @@ AC_ARG_ENABLE(libxml2, [  --enable-libxml2    build libxml2 xml parser library w
     AC_MSG_RESULT(yes)
     CFLAGS="$CFLAGS -DAXIS2_LIBXML2_ENABLED"
     WRAPPER_DIR="libxml2"
-    PKG_CHECK_MODULES(LIBXML2, libxml-2.0)
+	PKG_CHECK_MODULES(LIBXML2, libxml-2.0)
 
     ;;
   esac ],
   AC_MSG_RESULT(no)
-)
-
-AC_MSG_CHECKING(whether to build xpath)
-AC_ARG_ENABLE(xpath, [  --enable-xpath    build xpath. default=yes],
-[ case "${enableval}" in
-  no)
-    AC_MSG_RESULT(no)
-    ;;
-  *)
-    AC_MSG_RESULT(yes)
-    XPATH_DIR="xpath"
-
-    ;;
-  esac ],
-  AC_MSG_RESULT(yes)
-  XPATH_DIR="xpath"
 )
 
 
@@ -147,8 +173,8 @@ AC_ARG_ENABLE(tests, [  --enable-tests    build tests. default=no],
 )
 
 PKG_PROG_PKG_CONFIG(0.15)
-CFLAGS="$CFLAGS $LIBXML2_CFLAGS $GUTHTHILA_CFLAGS"
-VERSION_NO="4:0:4"
+CFLAGS="$CFLAGS $GUTHTHILA_CFLAGS"
+VERSION_NO="7:0:7"
 
 AC_SUBST(VERSION_NO)
 AC_SUBST(LIBXML2_CFLAGS)

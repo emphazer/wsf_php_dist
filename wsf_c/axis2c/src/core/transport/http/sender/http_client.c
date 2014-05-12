@@ -32,6 +32,9 @@
 #include "ssl/ssl_stream.h"
 #endif
 
+#define AXIS2_HTTP_HEADER_LENGTH 1024
+#define AXIS2_HTTP_STATUS_LINE_LENGTH 512
+
 struct axis2_http_client
 {
     int sockfd;
@@ -120,7 +123,15 @@ axis2_http_client_free(
     }
     if(-1 != http_client->sockfd)
     {
+#ifdef AXIS2_SSL_ENABLED
+		if(http_client->data_stream->stream_type == AXIS2_STREAM_SOCKET)
+		{
+			axutil_network_handler_close_socket(env, http_client->sockfd);
+			/** ssl streams of type AXIS2_STREAM_BASIC  will be handled by SSL_shutdown(); */
+		}
+#else
         axutil_network_handler_close_socket(env, http_client->sockfd);
+#endif
         http_client->sockfd = -1;
     }
 
@@ -269,8 +280,9 @@ axis2_http_client_send(
                 return AXIS2_FAILURE;
             }
         }
-        client->data_stream =
-        axutil_stream_create_ssl(env, client->sockfd, axis2_http_client_get_server_cert(client,
+		if(!client->data_stream)
+			client->data_stream =
+			axutil_stream_create_ssl(env, client->sockfd, axis2_http_client_get_server_cert(client,
                 env), axis2_http_client_get_key_file(client, env), ssl_pp);
 #else
         axutil_network_handler_close_socket(env, client->sockfd);
@@ -284,7 +296,8 @@ axis2_http_client_send(
     }
     else
     {
-        client->data_stream = axutil_stream_create_socket(env, client->sockfd);
+        if(!client->data_stream)
+            client->data_stream = axutil_stream_create_socket(env, client->sockfd);
     }
 
     if(!client->data_stream)
@@ -430,7 +443,7 @@ axis2_http_client_send(
 
     if(client->doing_mtom)
     {
-        axis2_status_t status = AXIS2_SUCCESS;
+        /*axis2_status_t status = AXIS2_SUCCESS; */
         axutil_http_chunked_stream_t *chunked_stream = NULL;
 
         /* If the callback name is not there, then we will check whether there 
@@ -542,9 +555,9 @@ axis2_http_client_receive_header(
 {
     int status_code = -1;
     axis2_http_status_line_t *status_line = NULL;
-    axis2_char_t str_status_line[512];
+    axis2_char_t str_status_line[AXIS2_HTTP_STATUS_LINE_LENGTH];
     axis2_char_t tmp_buf[3];
-    axis2_char_t str_header[512];
+    axis2_char_t str_header[AXIS2_HTTP_HEADER_LENGTH];
     int read = 0;
     int http_status = 0;
     axis2_bool_t end_of_line = AXIS2_FALSE;
@@ -566,7 +579,7 @@ axis2_http_client_receive_header(
     /* read the status line */
     do
     {
-        memset(str_status_line, 0, 512);
+        memset(str_status_line, 0, AXIS2_HTTP_STATUS_LINE_LENGTH);
         while((read = axutil_stream_read(client->data_stream, env, tmp_buf, 1)) > 0)
         {
             /* "read" variable is number of characters read by stream */
@@ -617,7 +630,7 @@ str_status_line %s", str_status_line);
         axis2_http_status_line_get_reason_phrase(status_line, env));
 
     /* now read the headers */
-    memset(str_header, 0, 512);
+    memset(str_header, 0, AXIS2_HTTP_HEADER_LENGTH);
     end_of_line = AXIS2_FALSE;
     while(AXIS2_FALSE == end_of_headers)
     {
@@ -640,7 +653,7 @@ str_status_line %s", str_status_line);
             else
             {
                 axis2_http_header_t *tmp_header = axis2_http_header_create_by_str(env, str_header);
-                memset(str_header, 0, 512);
+                memset(str_header, 0, AXIS2_HTTP_HEADER_LENGTH);
                 if(tmp_header)
                 {
                     axis2_http_simple_response_set_header(client->response, env, tmp_header);
@@ -783,7 +796,7 @@ axis2_http_client_connect_ssl_host(
 {
     axutil_stream_t *tmp_stream = NULL;
     axis2_char_t *connect_string = NULL;
-    axis2_char_t str_status_line[512];
+    axis2_char_t str_status_line[AXIS2_HTTP_STATUS_LINE_LENGTH];
     axis2_char_t tmp_buf[3];
     int read = 0;
     axis2_bool_t end_of_line = AXIS2_FALSE;
@@ -815,7 +828,7 @@ axis2_http_client_connect_ssl_host(
     axutil_stream_write(tmp_stream, env, connect_string, axutil_strlen(connect_string)
         * sizeof(axis2_char_t));
 
-    memset(str_status_line, 0, 512);
+    memset(str_status_line, 0, AXIS2_HTTP_STATUS_LINE_LENGTH);
     while((read = axutil_stream_read(tmp_stream, env, tmp_buf, 1)) > 0)
     {
         tmp_buf[read] = '\0';
@@ -849,7 +862,7 @@ axis2_http_client_connect_ssl_host(
     }
     /* We need to empty the stream before we return
      */
-    memset(str_status_line, 0, 512);
+    memset(str_status_line, 0, AXIS2_HTTP_STATUS_LINE_LENGTH);
     while(AXIS2_FALSE == end_of_response)
     {
         while((read = axutil_stream_read(tmp_stream, env, tmp_buf, 1)) > 0)

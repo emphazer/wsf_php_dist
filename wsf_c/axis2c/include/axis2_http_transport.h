@@ -742,6 +742,13 @@ extern "C"
      */
     #define AXIS2_HTTP_HEADER_ACCEPT_MULTIPART_RELATED AXIOM_MIME_TYPE_MULTIPART_RELATED
 
+#ifdef AXIS2_JSON_ENABLED
+    /**
+     * AXIS2_HTTP_HEADER_ACCEPT_JSON
+     */
+#define AXIS2_HTTP_HEADER_ACCEPT_JSON "application/json"
+#endif
+
     /**
      * HEADER_ACCEPT_APPLICATION_DIME
      */
@@ -965,6 +972,21 @@ extern "C"
       */
     #define AXIS2_PROXY_AUTH_PASSWD "PROXY_AUTH_PASSWD"
 
+    /**
+     * NTLM authentication domain property name
+     */
+    #define AXIS2_NTLM_AUTH_DOMAIN "NTLM_AUTH_DOMAIN"
+    
+    /**
+     * NTLM authentication workstation property name
+     */
+    #define AXIS2_NTLM_AUTH_WORKSTATION "NTLM_AUTH_WORKSTATION"
+    
+    /**
+     * NTLM authentication flags property name
+     */
+    #define AXIS2_NTLM_AUTH_FLAGS "NTLM_AUTH_FLAGS"
+
 
     /*    #define AXIS2_HTTP_AUTH_TYPE "HTTP_AUTH_TYPE"*/
 
@@ -979,6 +1001,11 @@ extern "C"
     #define AXIS2_HTTP_AUTH_TYPE_DIGEST "Digest"
 
     /**
+     * "NTLM" authentication
+     */
+    #define AXIS2_HTTP_AUTH_TYPE_NTLM "NTLM"
+
+    /**
       * Proxy "Basic" authentication
       */
     #define AXIS2_PROXY_AUTH_TYPE_BASIC "Basic"
@@ -987,6 +1014,11 @@ extern "C"
       * Proxy "Digest" authentication
       */
     #define AXIS2_PROXY_AUTH_TYPE_DIGEST "Digest"
+
+    /**
+      * Proxy "NTLM" authentication
+      */
+    #define AXIS2_PROXY_AUTH_TYPE_NTLM "NTLM"
 
 
     /**

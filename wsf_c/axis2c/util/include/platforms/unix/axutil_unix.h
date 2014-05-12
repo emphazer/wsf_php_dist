@@ -104,7 +104,6 @@ extern "C"
 #include <sys/time.h>
 #include <sys/timeb.h>
 
-    /*#include <unistd.h> */
 #include <errno.h>
 #include <sys/param.h>
 #include <stdio.h>
@@ -123,7 +122,9 @@ extern "C"
 
     /* for file access handling */
 #ifdef HAVE_UNISTD_H
+#ifndef __APPLE__
 #include <unistd.h>
+#endif /* ifndef __APPLE__ */
 #endif /*HAVE_UNISTD_H */
 
     /* network handling */
@@ -262,7 +263,11 @@ extern "C"
 
     /** minizip functions */
 #define axis2_fill_win32_filefunc(ffunc)
-#define AXIS2_UNZOPEN2(zipfilename,ffunc) unzOpen2(zipfilename,NULL); memset(&ffunc, 0, sizeof(ffunc));
+#define AXIS2_UNZOPEN2(zipfilename, ffunc, uf) \
+    { \
+        uf = unzOpen2(zipfilename,NULL); \
+        memset(&ffunc, 0, sizeof(ffunc)); \
+    }
 
     /**
       * handling variable number of arguments (for log.c)

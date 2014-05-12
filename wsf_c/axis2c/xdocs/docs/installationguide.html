@@ -1,4 +1,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
 <html><head><title>Apache Axis2/C - Installation Guide</title>
 
 </head>
@@ -8,11 +24,11 @@
 the server and
 client samples on Linux and Microsoft Windows operating systems.</p>
 <p>This release comes in two forms, source and binary and you can
-download them from <a href="http://ws.apache.org/axis2/c/download.cgi" class="externalLink">here</a>. This
+download them from <a href="http://axis.apache.org/axis2/c/core/download.cgi" class="externalLink">here</a>. This
 document covers
 both forms.</p>
-<p>Please send your feedback to the developer mailing list: <a href="mailto:axis-c-dev@ws.apache.org">axis-c-dev@ws.apache.org</a>
-(Subscription details are available on the <a href="http://ws.apache.org/axis2/c/mail-lists.html" class="externalLink" title="External Link">Axis2 site</a>.)
+<p>Please send your feedback to the developer mailing list: <a href="mailto:c-dev@axis.apache.org">c-dev@axis.apache.org</a>
+(Subscription details are available on the <a href="http://axis.apache.org/axis2/c/core/mail-lists.html" class="externalLink" title="External Link">Axis2 site</a>.)
 Please
 remember to prefix the subject with [Axis2].</p>
 <div class="section"><a name="Contents"></a>
@@ -142,15 +158,15 @@ You can checkout Qpid SVN source from <a class="externalLink" href="https://svn.
 <p>
 (a) Extract the binary tar package to a directory.<br />
 <br />
-(b) Set WSFC_HOME environment variable pointing to the location where
+(b) Set AXIS2C_HOME environment variable pointing to the location where
 you have extracted Axis2/C.<br />
 <br />
-<code>$ WSFC_HOME='/your_path_to_axis2c'</code><br />
-<code>$ export WSFC_HOME</code><br />
+<code>$ AXIS2C_HOME='/your_path_to_axis2c'</code><br />
+<code>$ export AXIS2C_HOME</code><br />
 <br />
-NOTE : You will need to set WSFC_HOME only if you need to run Axis2/C
+NOTE : You will need to set AXIS2C_HOME only if you need to run Axis2/C
 samples or tests. The reason is that the samples and test codes use
-WSFC_HOME to get the path to Axis2/C. To write your own services or
+AXIS2C_HOME to get the path to Axis2/C. To write your own services or
 clients this is not a requirement.<br />
 </p>
 </div>
@@ -160,15 +176,15 @@ clients this is not a requirement.<br />
 <h4>1.3.1 Basic Build</h4>
 (a) Extract the source tar package to a directory<br />
 <br />
-(b) Set WSFC_HOME environment variable pointing to the location where
+(b) Set AXIS2C_HOME environment variable pointing to the location where
 you want to install Axis2/C.<br />
 <br />
-<code>$ WSFC_HOME='/your_desired_path_to_axis2c_installation'</code><br />
-<code>$ export WSFC_HOME</code><br />
+<code>$ AXIS2C_HOME='/your_desired_path_to_axis2c_installation'</code><br />
+<code>$ export AXIS2C_HOME</code><br />
 <br />
-NOTE : You will need to set WSFC_HOME only if you need to run Axis2/C
+NOTE : You will need to set AXIS2C_HOME only if you need to run Axis2/C
 samples or tests. The reason is that the samples and test codes use
-WSFC_HOME to get
+AXIS2C_HOME to get
 the path to Axis2/C. To write your own services or clients this is not
 a requirement.<br />
 <br />
@@ -180,7 +196,7 @@ a requirement.<br />
 This can be done by running the following command sequence in the
 directory where you have extracted the source.<br />
 <br />
-<code>$ ./configure --prefix=${WSFC_HOME}</code><br />
+<code>$ ./configure --prefix=${AXIS2C_HOME}</code><br />
 <code>$ make</code><br />
 <code>$ make install</code><br />
 <br />
@@ -192,10 +208,10 @@ default be installed into '/usr/local/axis2c' directory.<br />
 <br />
 You could run 'make check' to test if everything is working fine.
 However,note that the test/core/clientapi/test_clientapi program would
-fail unless WSFC_HOME points to the installed location.(It's looking
+fail unless AXIS2C_HOME points to the installed location.(It's looking
 for Axis2/C
 repository).This means you really should run 'make &amp;&amp;
-make install', then set 'WSFC_HOME=/path/to/install', and then 'make
+make install', then set 'AXIS2C_HOME=/path/to/install', and then 'make
 check'. That's a little different than the usual 'make
 &amp;&amp; make check &amp;&amp; make install' process.<br />
 </div>
@@ -240,10 +256,10 @@ samples.<br />
 To build the samples:<br />
 <br />
 <code>$ export
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${WSFC_HOME}/lib/</code><br />
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AXIS2C_HOME}/lib/</code><br />
 <code>$ cd samples</code><br />
-<code>$ ./configure --prefix=${WSFC_HOME}
---with-axis2=${WSFC_HOME}/include/axis2-1.7.0</code><br />
+<code>$ ./configure --prefix=${AXIS2C_HOME}
+--with-axis2=${AXIS2C_HOME}/include/axis2-1.7.0</code><br />
 <code>$ make</code><br />
 <code>$ make install</code><br />
 <br />
@@ -279,7 +295,7 @@ locked="false"&gt;5672&lt;/parameter&gt;<br />
 <h4>(a) Server</h4>
 You have to first start the axis2_http_server as follows.<br />
 <br />
-<code>$ cd ${WSFC_HOME}/bin</code><br />
+<code>$ cd ${AXIS2C_HOME}/bin</code><br />
 <code>$ ./axis2_http_server</code><br />
 <br />
 You should see the message<br />
@@ -298,14 +314,14 @@ NOTE 2 : If you run into shared lib problems, set the LD_LIBRARY_PATH
 as follows.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>$
 export
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${WSFC_HOME}/lib</code><br />
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AXIS2C_HOME}/lib</code><br />
 </div>
 <div class="subsection"><a name="1.5.1.b"></a>
 <h4>(b) Clients</h4>
 When the axis2_http_server is up and running, you can run the sample
 clients in a new shell as follows.<br />
 <br />
-<code>$ cd ${WSFC_HOME}/samples/bin</code><br />
+<code>$ cd ${AXIS2C_HOME}/samples/bin</code><br />
 <code>$ ./echo</code><br />
 <br />
 This will invoke the echo service.<br />
@@ -320,7 +336,7 @@ with '-h' option<br />
 NOTE : If you run into shared lib problems, set the LD_LIBRARY_PATH as
 follows.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>$
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${WSFC_HOME}/lib</code>
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AXIS2C_HOME}/lib</code>
 </div>
 </div>
 <div class="subsection"><a name="1.5.2"></a>
@@ -334,7 +350,7 @@ Start the Qpid broker as follows.<br />
 <br />
 Start the axis2_amqp_server as follows.<br />
 <br />
-<code>$ cd ${WSFC_HOME}/bin</code><br />
+<code>$ cd ${AXIS2C_HOME}/bin</code><br />
 <code>$ ./axis2_amqp_server</code><br />
 <br />
 You should see the message<br />
@@ -353,14 +369,14 @@ axis2_amqp_server.<br />
 NOTE 3 : If you run into shared lib problems, set the LD_LIBRARY_PATH
 as follows.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>$
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${WSFC_HOME}/lib</code>
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AXIS2C_HOME}/lib</code>
 </div>
 <div class="subsection"><a name="1.5.2.b"></a>
 <h4>(b) Clients</h4>
 When the axis2_amqp_server is up and running, you can run the sample
 clients in a new shell as follows.<br />
 <br />
-<code>$ cd ${WSFC_HOME}/sample/bin/amqp</code><br />
+<code>$ cd ${AXIS2C_HOME}/sample/bin/amqp</code><br />
 <code>$ ./echo_blocking</code><br />
 <br />
 This will invoke the echo service.<br />
@@ -371,7 +387,7 @@ with '-h' option<br />
 NOTE : If you run into shared lib problems, set the LD_LIBRARY_PATH as
 follows.<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>$
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${WSFC_HOME}/lib</code>
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${AXIS2C_HOME}/lib</code>
 </div>
 </div>
 </div>
@@ -512,23 +528,23 @@ directory named deploy under the build directory,
 You need to set a couple of environment variables before you can run
 the server and samples.<br />
 <br />
-Set the variable WSFC_HOME to the deploy folder (C:\axis2c)<br />
-Add the path to lib directory to the PATH variable (%WSFC_HOME%\lib)<br />
+Set the variable AXIS2C_HOME to the deploy folder (C:\axis2c)<br />
+Add the path to lib directory to the PATH variable (%AXIS2C_HOME%\lib)<br />
 <br />
-Copy iconv.dll, zlib1.dll, libxml2.dll to the %WSFC_HOME%\lib folder. This is 
+Copy iconv.dll, zlib1.dll, libxml2.dll to the %AXIS2C_HOME%\lib folder. This is 
 optional.<br />
 <div class="subsection"><a name="2.4.1"></a>
 <h4>2.4.1 HTTP transport</h4>
 <div class="subsection"><a name="2.4.1.a"></a>
 <h4>(a) Server</h4>
-<code>&gt; cd %WSFC_HOME%\bin</code><br />
+<code>&gt; cd %AXIS2C_HOME%\bin</code><br />
 <code>&gt; axis2_http_server.exe </code><br />
 <br />
 You should see the message<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Started
 Simple Axis2 HTTP Server...<br />
 <br />
-By default the log is created under %WSFC_HOME%\logs folder with the
+By default the log is created under %AXIS2C_HOME%\logs folder with the
 name axis2.log.<br />
 <br />
 NOTE : You may provide command line options to change the default
@@ -537,11 +553,11 @@ behaviour. Type 'axis2_http_server.exe -h' to learn about the usage
 <div class="subsection"><a name="2.4.1.b"></a>
 <h4>(b) Clients</h4>
 Now you can run any sample client deployed under
-%WSFC_HOME%\samples\bin<br />
+%AXIS2C_HOME%\samples\bin<br />
 <br />
 Example:<br />
 <ul>
-<code>&gt; cd %WSFC_HOME%\samples\bin</code><br />
+<code>&gt; cd %AXIS2C_HOME%\samples\bin</code><br />
 <code>&gt; echo.exe</code>
 </ul>
 </div>
@@ -586,7 +602,7 @@ APACHE_BIN_DIR = E:\Apache22<br />
 <br />
 After compiling the sources (as described in section 2.3) build the
 mod_axis2.dll by issuing the command 'nmake axis2_apache_module'.<br />
-This will build mod_axis2.dll and copy it to %WSFC_HOME%\lib
+This will build mod_axis2.dll and copy it to %AXIS2C_HOME%\lib
 directory.<br />
 <br />
 Example:<br />
@@ -597,12 +613,12 @@ C:\axis2c\build\deploy\lib </div>
 NOTE : To do the following tasks, you might need super user privileges
 on your machine. If you are using the binary release of Axis2/C, please note that it is built with Apache 2.2.<br />
 <br />
-Copy the mod_axis2 (libmod_axis2.so.0.6.0 on Linux and mod_axis2.dll on
+Copy the mod_axis2 (libmod_axis2.so.0.7.0 on Linux and mod_axis2.dll on
 Windows) to "&lt;apache2 modules directory&gt;" as
 mod_axis2.so <br />
 <br />
 Example:<br />
-<code>cp $WSFC_HOME/lib/libmod_axis2.so.0.6.0
+<code>cp $AXIS2C_HOME/lib/libmod_axis2.so.0.7.0
 /usr/lib/apache2/modules/mod_axis2.so </code>(on Linux)<br />
 <code>copy C:\axis2c\build\deploy\lib\mod_axis2.dll
 C:\Apache2\modules\mod_axis2.so </code>(on Windows)<br />
@@ -665,7 +681,7 @@ Module (mod_axis2_IIS)</h2>
 <h3>4.1 Building mod_axis2_IIS from Source</h3>
 After compiling the source (as described in section 2.3) build the
 mod_axis2.dll by issuing the command 'nmake axis2_IIS_module'.<br />
-This will build the mod_axis2_IIS.dll and copy it to %WSFC_HOME%\lib
+This will build the mod_axis2_IIS.dll and copy it to %AXIS2C_HOME%\lib
 directory.<br />
 <br />
 Example:<br />
@@ -679,7 +695,7 @@ HKEY_LOCAL_MACHINE\SOFTWARE\Apache Axis2c\IIS ISAPI Redirector<br />
 Under this registry key add the following entries.<br />
 <br />
 A String value with the name "axis2c_home". The value is the
-WSFC_HOME.<br />
+AXIS2C_HOME.<br />
 Example : c:\axis2c<br />
 <br />
 A String value with the name "log_file". The value is the absolute path
@@ -754,8 +770,8 @@ If you haven't already done so you need to configure and set up an cgi-bin/ dire
 <br /><br />Now we have to set up configuration parameters via environment variables for the cgi deployment using the SetEnv directive.
 <br /><br />{ You need to have mod_env enabled for this to work )
 <br /><br />Add the following to your apache2 configuration file (httpd.conf)
-<br /><br /><code>SetEnv WSFC_HOME &lt;your path to axis2c home dir&gt;</code>
-<br /><br />( i.e. SetEnv WSFC_HOME /usr/local/axis2c/ )
+<br /><br /><code>SetEnv AXIS2C_HOME &lt;your path to axis2c home dir&gt;</code>
+<br /><br />( i.e. SetEnv AXIS2C_HOME /usr/local/axis2c/ )
 <br /><br />If you have chosen another alias for you cgi-bin you can also set up an 
 AXIS2C_URL_PREFIX environment variable, but it's not needed if you have chosen /cgi-bin/. 
 AXIS2C_URL_PREFIX defines your web services deployment url prefix. Lets say you have chosen URL
@@ -766,7 +782,7 @@ Then you need to set AXIS2_URL_PREFIX environment variable as follows:
 <br /><br />Now we have configured apache such that all requests with URL  http://&lt;domain-name&gt;/cgi-bin/ requests
 are located at your configured cgi folder. We have granted Apache server to execute CGI from that directory 
 and treat files with .cgi extensions as CGI executables.
-<br /><br />Now you need to copy the Axis2/C cgi executable &quot;axis2.cgi&quot; located in &lt;WSFC_HOME&gt;\bin directory. </div>
+<br /><br />Now you need to copy the Axis2/C cgi executable &quot;axis2.cgi&quot; located in &lt;AXIS2C_HOME&gt;\bin directory. </div>
 <div class="subsection"><a name="5.2"/>
 <h3>5.2 Deploying in IIS</h3>
 <b>IIS 5.1</b>

@@ -1,18 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
 <html><head><title>Apache Axis2/C - Manual</title></head>
 <body>
 <h2>Preamble</h2>
 <p style="margin-bottom: 0in;">This document is intended
 to be a reference
-manual for <a href="http://ws.apache.org/axis2/c" class="externalLink" title="External Link">Apache
+manual for <a href="http://axis.apache.org/axis2/c/core/" class="externalLink" title="External Link">Apache
 Axis2/C</a>. This
 manual details how Axis2/C can be used to provide and consume Web
 services.</p>
 <p style="margin-bottom: 0in;">Please send your feedback
 to the Apache Axis2/C
-developer mailing list (<a href="mailto:axis-c-dev@apache.org">axis-c-dev@apache.org</a>).
+developer mailing list (<a href="mailto:c-dev@axis.apache.org">c-dev@axis.apache.org</a>).
 Subscription
-details are available on the <a href="http://ws.apache.org/axis2/c/mail-lists.html" class="externalLink" title="External Link">Apache
+details are available on the <a href="http://axis.apache.org/axis2/c/core/mail-lists.html" class="externalLink" title="External Link">Apache
 Axis2/C website</a>.</p>
 <p>This document uses the following conventions:</p>
 <ul>
@@ -66,16 +82,16 @@ options</a></li>
 <p>This section is aimed to help you get a Web service running in
 a short
 time using Axis2/C, and consume that service using an Axis2/C client.</p>
-<p>First, <a href="http://ws.apache.org/axis2/c/download.cgi" class="externalLink" title="External Link">download</a>
+<p>First, <a href="http://axis.apache.org/axis2/c/core/download.cgi" class="externalLink" title="External Link">download</a>
 the latest binary release from Apache Axis2/C. Once you download the
 correct
 binary that suits your platform, all that you require to get it running
 is to
-extract the package to a folder of your choice, and set the WSFC_HOME
+extract the package to a folder of your choice, and set the AXIS2C_HOME
 environment variable to point to this extracted folder. For Linux, you
 may
 have to set the LD_LIBRARY_PATH environment variable to include the lib
-folder (e.g. add $WSFC_HOME/lib). For MS Windows, you will have to
+folder (e.g. add $AXIS2C_HOME/lib). For MS Windows, you will have to
 add the
 lib folder to your PATH variable to include the Axis2/C DLLs to your
 path.</p>
@@ -87,7 +103,7 @@ change the directory to samples/bin in another command shell and run
 any of
 the samples there (you may have to set the environment variables in
 this new
-shell as well). Please see the <a href="http://ws.apache.org/axis2/c/docs/installationguide.html" class="externalLink" title="External Link">installation
+shell as well). Please see the <a href="http://axis.apache.org/axis2/c/core/docs/installationguide.html" class="externalLink" title="External Link">installation
 guide</a> for more details.</p>
 <p>Once you have Axis2/C up and running successfully, you can
 start writing
@@ -251,16 +267,16 @@ one operation, with the name "greet".<br />
 <p>You can compile the service sample as shown below.</p>
 <p>On Linux:</p>
 <div class="source">
-<pre>gcc -shared -olibhello.so -I$WSFC_HOME/include/axis2-1.7.0/ -L$WSFC_HOME/lib -laxutil -laxis2_axiom -laxis2_parser -laxis2_engine -lpthread -laxis2_http_sender -laxis2_http_receiver hello_svc.c<br /><br /></pre>
+<pre>gcc -shared -olibhello.so -I$AXIS2C_HOME/include/axis2-1.7.0/ -L$AXIS2C_HOME/lib -laxutil -laxis2_axiom -laxis2_parser -laxis2_engine -lpthread -laxis2_http_sender -laxis2_http_receiver hello_svc.c<br /><br /></pre>
 </div>
 <p>On MS Windows:</p>
 <p>to compile,</p>
 <div class="source">
-<pre>cl.exe /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "AXIS2_DECLARE_EXPORT" /D "AXIS2_SVR_MULTI_THREADED" /w /nologo /I %WSFC_HOME%\include /c hello_svc.c<br /><br /></pre>
+<pre>cl.exe /D "WIN32" /D "_WINDOWS" /D "_MBCS" /D "AXIS2_DECLARE_EXPORT" /D "AXIS2_SVR_MULTI_THREADED" /w /nologo /I %AXIS2C_HOME%\include /c hello_svc.c<br /><br /></pre>
 </div>
 <p>to link,</p>
 <div class="source">
-<pre>link.exe /nologo /LIBPATH:%WSFC_HOME%\lib axutil.lib axiom.lib axis2_parser.lib axis2_engine.lib /DLL /OUT:hello.dll *.obj<br /><br /></pre>
+<pre>link.exe /nologo /LIBPATH:%AXIS2C_HOME%\lib axutil.lib axiom.lib axis2_parser.lib axis2_engine.lib /DLL /OUT:hello.dll *.obj<br /><br /></pre>
 </div>
 </div>
 <div class="subsection"><a name="1_1_7_Deploying_the_Service"></a>
@@ -269,7 +285,7 @@ one operation, with the name "greet".<br />
 we have to
 deploy the service. To deploy the service, you have to create a folder
 named
-'hello' in the WSFC_HOME/services folder, and copy the services.xml
+'hello' in the AXIS2C_HOME/services folder, and copy the services.xml
 file
 and the shared library file (libhello.so on Linux or hello.dll on MS
 Windows)
@@ -279,7 +295,7 @@ can start the
 simple axis server and then browse the list of deployed services using
 a Web
 browser. To start the simple axis server, you can go to the
-WSFC_HOME/bin
+AXIS2C_HOME/bin
 folder and run the executable axis2_http_server. The default URL that
 you can
 test the service list with is <a href="http://localhost:9090/axis2/services" class="externalLink" title="External Link">http://localhost:9090/axis2/services</a>.
@@ -345,7 +361,7 @@ The<code> axis2_svc_client</code> struct is meant to be
 used by the users to consume Web services. It provides an easy to use
 API. Service client create method takes the location of the repository
 as a parameter. For the purpose of our sample, you can use the
-WSFC_HOME as the repository. The concept of <a href="#repo_folder">repository</a>
+AXIS2C_HOME as the repository. The concept of <a href="#repo_folder">repository</a>
 is explained in detail in a later section.<br />
 </li>
 <li><b>Set options to service client instance</b><br />
@@ -405,16 +421,16 @@ response further.</p>
 <p>You can compile the client sample as shown below.</p>
 <p>On Linux:</p>
 <div class="source">
-<pre>gcc -o hello -I$WSFC_HOME/include/axis2-1.7.0/ -L$WSFC_HOME/lib -laxutil -laxis2_axiom -laxis2_parser -laxis2_engine -lpthread -laxis2_http_sender -laxis2_http_receiver hello.c -ldl -Wl,--rpath -Wl,$WSFC_HOME/lib<br /><br /></pre>
+<pre>gcc -o hello -I$AXIS2C_HOME/include/axis2-1.7.0/ -L$AXIS2C_HOME/lib -laxutil -laxis2_axiom -laxis2_parser -laxis2_engine -lpthread -laxis2_http_sender -laxis2_http_receiver hello.c -ldl -Wl,--rpath -Wl,$AXIS2C_HOME/lib<br /><br /></pre>
 </div>
 <p>On MS Windows:</p>
 <p>to compile,</p>
 <div class="source">
-<pre>cl.exe /nologo /D "WIN32" /D "_WINDOWS" /D "_MBCS" /I %WSFC_HOME%\include /c hello.c<br /><br /></pre>
+<pre>cl.exe /nologo /D "WIN32" /D "_WINDOWS" /D "_MBCS" /I %AXIS2C_HOME%\include /c hello.c<br /><br /></pre>
 </div>
 <p>to link,</p>
 <div class="source">
-<pre>link.exe /LIBPATH:%WSFC_HOME%\lib axutil.lib axiom.lib axis2_parser.lib axis2_engine.lib /OUT:hello.exe *.obj<br /><br /></pre>
+<pre>link.exe /LIBPATH:%AXIS2C_HOME%\lib axutil.lib axiom.lib axis2_parser.lib axis2_engine.lib /OUT:hello.exe *.obj<br /><br /></pre>
 </div>
 </div>
 <div class="subsection"><a name="1_2_5_Running_the_Client"></a>
@@ -1398,11 +1414,11 @@ for more details on how to package and deploy the module.</p>
 </div>
 <p>You can use the following options with simple axis HTTP server.</p>
 <div class="source">
-<pre> -p PORT port number to use, default port is 9090<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $WSFC_HOME/logs/axis2.log<br /> or axis2.log in current folder if WSFC_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
+<pre> -p PORT port number to use, default port is 9090<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $AXIS2C_HOME/logs/axis2.log<br /> or axis2.log in current folder if AXIS2C_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
 </div>
 <p>Example :</p>
 <div class="source">
-<pre> axis2_http_server -l 3 -p 8080 -r $WSFC_HOME -f /dev/stderr<br /><br /></pre>
+<pre> axis2_http_server -l 3 -p 8080 -r $AXIS2C_HOME -f /dev/stderr<br /><br /></pre>
 </div>
 </div>
 <div class="subsection"><a name="10_2_MS_Windows_Based_Systems"></a>
@@ -1413,11 +1429,11 @@ for more details on how to package and deploy the module.</p>
 </div>
 <p>You can use the following options with simple axis HTTP server.</p>
 <div class="source">
-<pre> -p PORT port number to use, default port is 9090<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is %WSFC_HOME%\logs\axis2.log<br /> or axis2.log in current folder if WSFC_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
+<pre> -p PORT port number to use, default port is 9090<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is %AXIS2C_HOME%\logs\axis2.log<br /> or axis2.log in current folder if AXIS2C_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
 </div>
 <p>Example :</p>
 <div class="source">
-<pre> axis2_http_server.exe -l 3 -p 8080 -r %WSFC_HOME% -f C:\logs\error.log<br /><br /></pre>
+<pre> axis2_http_server.exe -l 3 -p 8080 -r %AXIS2C_HOME% -f C:\logs\error.log<br /><br /></pre>
 </div>
 <p style="margin-bottom: 0in;"><br />
 </p>
@@ -1484,16 +1500,16 @@ the commands given below,
 you might require super user privileges on your machine. If you are
 using the binary release of Axis2/C, please note that it is built with
 Apache 2.2.</font></p>
-<p>Copy the mod_axis2 shared library <font color="#4169e1">(libmod_axis2.so.0.6.0
+<p>Copy the mod_axis2 shared library <font color="#4169e1">(libmod_axis2.so.0.7.0
 on Linux and mod_axis2.dll on MS
 Windows)</font> to the Apache2 modules directory as mod_axis2.so</p>
 <p>On Linux</p>
 <div class="source">
-<pre>	cp $WSFC_HOME/lib/libmod_axis2.so.0.6.0 /usr/lib/apache2/modules/mod_axis2.so<br /></pre>
+<pre>	cp $AXIS2C_HOME/lib/libmod_axis2.so.0.7.0 /usr/lib/apache2/modules/mod_axis2.so<br /></pre>
 </div>
 <p>On MS Windows</p>
 <div class="source">
-<pre>	copy /Y "%WSFC_HOME%\lib\mod_axis2.dll" C:\Apache2\modules\mod_axis2.so<br /><br /></pre>
+<pre>	copy /Y "%AXIS2C_HOME%\lib\mod_axis2.dll" C:\Apache2\modules\mod_axis2.so<br /><br /></pre>
 </div>
 <p>Edit the Apache2's configuration file (generally httpd.conf)
 and add the
@@ -1606,14 +1622,14 @@ to run the command</p>
 </div>
 <p>In this document I assume that the mod_axis2_IIS.dll
 is in the directory <code>c:\axis2c\lib</code> and
-WSFC_HOME
+AXIS2C_HOME
 is <code>c:\axis2c</code></p>
 <p>Add the following key to the
 registery.</p>
 <p><code>HKEY_LOCAL_MACHINE\SOFTWARE\Apache Axis2c\IIS
 ISAPI
 Redirector</code></p>
-<p>Add a string value with the name <code>WSFC_HOME</code>
+<p>Add a string value with the name <code>AXIS2C_HOME</code>
 and a
 value of <code>c:\axis2c</code></p>
 <p>Add a string value with the name <code>log_file</code>
@@ -1689,7 +1705,7 @@ Linux
 by configuring Axis2/C with the <code>--with-openssl=[path to Openssl installation directory]</code>
 option.</p>
 <p>Example <code><br />
-%./configure --with-openssl=/opt/openssl --prefix=${WSFC_HOME}/deploy<br />
+%./configure --with-openssl=/opt/openssl --prefix=${AXIS2C_HOME}/deploy<br />
 %make<br />
 %make install<br />
 </code></p>
@@ -1979,9 +1995,9 @@ HTTP Authentication requirements.</p>
 of Axis2/C
 stubs and skeletons for WSDL files. This is a Java tool that can be
 used to
-generate C code that works with Axis2/C API. You should use <a href="http://svn.apache.org/viewvc/webservices/axis2/trunk/java" class="externalLink" title="External Link">Axis2/Java
-SVN</a> revision 529533 or later revisions. You can download the <a href="http://ws.apache.org/axis2/download.cgi" class="externalLink" title="External Link">Axis2/Java latest
-release</a> and use those binaries to generate the code. Check out a <a href="http://ws.apache.org/axis2/1_5/reference.html#wsdl2java" class="externalLink" title="External Link">basic
+generate C code that works with Axis2/C API. You should use <a href="https://svn.apache.org/repos/asf/axis/axis2/java/core/trunk" class="externalLink" title="External Link">Axis2/Java
+SVN</a> revision 529533 or later revisions. You can download the <a href="http://axis.apache.org/axis2/java/core/download.cgi" class="externalLink" title="External Link">Axis2/Java latest
+release</a> and use those binaries to generate the code. Check out a <a href="http://axis.apache.org/axis2/java/core/docs/reference.html#wsdl2java" class="externalLink" title="External Link">basic
 guide</a> on the Java tool.</p>
 <p>Before you run the tool, make sure that all the .jar library
 files that
@@ -2001,7 +2017,7 @@ skeleton and other required files with ADB (Axis Data Binding) support.</p>
 </div>
 <p>To understand the meanings of the options used with the tool,
 please have
-a look at the <a href="http://ws.apache.org/axis2/1_4_1/reference.html#wsdl2java" class="externalLink" title="External Link"> Java tool
+a look at the <a href="http://axis.apache.org/axis2/java/core/docs/reference.html#wsdl2java" class="externalLink" title="External Link"> Java tool
 documentation</a>.</p>
 <p>If you need an XML in/out programming model, you can just
 ignore the data
@@ -2082,7 +2098,7 @@ command with
 the option to enable tcp by providing the following argument:</li>
 <pre>	./configure --enable-tcp=yes<br />	make<br />	make install</pre>
 <li>Then to confirm that you have successfully built the source
-with tcp enabled you can check in your $WSFC_HOME/lib folder for
+with tcp enabled you can check in your $AXIS2C_HOME/lib folder for
 following files:</li>
 <pre>	libaxis2_tcp_sender.so<br />	libaxis2_tcp_reciever.so</pre>
 <li>To setup the tcp transport sender, you have to edit the
@@ -2098,7 +2114,7 @@ option to enable tcp
 by specifying in <code>configure.in</code>:</li>
 <pre> WITH_TCP = 1</pre>
 <li>Then to confirm that you have successfully built the source
-with tcp enabled you can check in your %WSFC_HOME%\lib folder for
+with tcp enabled you can check in your %AXIS2C_HOME%\lib folder for
 following files:</li>
 <pre>	axis2_tcp_sender.dll<br /> axis2_tcp_reciever.dll</pre>
 <li>To setup the tcp transport sender, you have to edit the
@@ -2112,10 +2128,10 @@ axis2.xml by uncommenting following entry:</li>
 <li>To run the tcp server on Linux based systems, you have to
 start the tcp
 server which runs in 9091 as its default port.</li>
-<pre>	cd $WSFC_HOME/bin/<br />	./axis2_tcp_server</pre>
+<pre>	cd $AXIS2C_HOME/bin/<br />	./axis2_tcp_server</pre>
 <li>To run the tcp server on MS Windows based systems, you have
 to start the tcp server as,</li>
-<pre> cd %WSFC_HOME%\bin<br /> axis2_tcp_server.exe</pre>
+<pre> cd %AXIS2C_HOME%\bin<br /> axis2_tcp_server.exe</pre>
 </ul>
 </div>
 <div class="subsection"><a name="18_2_1_Simple_Axis2_TCP_Server"></a>
@@ -2131,11 +2147,11 @@ to start the tcp server as,</li>
 </div>
 <p>You can use the following options with simple axis TCP server.</p>
 <div class="source">
-<pre> -p PORT port number to use, default port is 9091<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $WSFC_HOME/logs/axis2.log<br /> or axis2.log in current folder if WSFC_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
+<pre> -p PORT port number to use, default port is 9091<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $AXIS2C_HOME/logs/axis2.log<br /> or axis2.log in current folder if AXIS2C_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
 </div>
 <p>Example :</p>
 <div class="source">
-<pre> axis2_tcp_server -l 3 -p 8080 -r $WSFC_HOME -f /dev/stderr<br /><br /></pre>
+<pre> axis2_tcp_server -l 3 -p 8080 -r $AXIS2C_HOME -f /dev/stderr<br /><br /></pre>
 </div>
 </div>
 <div class="subsection"><a name="18_2_1_2_MS_Windows_Based_Systems"></a>
@@ -2146,11 +2162,11 @@ to start the tcp server as,</li>
 </div>
 <p>You can use the following options with simple axis TCP server.</p>
 <div class="source">
-<pre> -p PORT port number to use, default port is 9091<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is %WSFC_HOME%\logs\axis2.log<br /> or axis2.log in current folder if WSFC_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
+<pre> -p PORT port number to use, default port is 9091<br /> -r REPO_PATH repository path, default is ../<br /> -t TIMEOUT socket read timeout, default is 30 seconds<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical 1 - errors 2 - warnings<br /> 3 - information 4 - debug 5- user 6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is %AXIS2C_HOME%\logs\axis2.log<br /> or axis2.log in current folder if AXIS2C_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
 </div>
 <p>Example :</p>
 <div class="source">
-<pre> axis2_tcp_server.exe -l 3 -p 8080 -r %WSFC_HOME% -f C:\logs\error.log<br /><br /></pre>
+<pre> axis2_tcp_server.exe -l 3 -p 8080 -r %AXIS2C_HOME% -f C:\logs\error.log<br /><br /></pre>
 </div>
 </div>
 <div class="subsection"><a name="18_3_Client_Side"></a>
@@ -2186,7 +2202,7 @@ command with
 the option --with-qpid as follows</li>
 <pre> ./configure --with-qpid=path/to/qpid home<br /> make<br /> make install</pre>
 <li>Then to confirm that you have successfully built the source
-with AMQP enabled you can check in your $WSFC_HOME/lib folder for
+with AMQP enabled you can check in your $AXIS2C_HOME/lib folder for
 following files:</li>
 <pre> libaxis2_qmqp_sender.so<br /> libaxis2_amqp_reciever.so</pre>
 <li>To setup the AMQP transport, you have to edit the
@@ -2208,7 +2224,7 @@ Start the Qpid broker as follows.<br />
 <br />
 Start the axis2_amqp_server as follows.<br />
 <br />
-<pre>$ cd ${WSFC_HOME}/bin<br />$ ./axis2_amqp_server<br /> </pre>
+<pre>$ cd ${AXIS2C_HOME}/bin<br />$ ./axis2_amqp_server<br /> </pre>
 You should see the message<br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Started
 Simple Axis2 AMQP Server...<br />
@@ -2234,11 +2250,11 @@ then axis2_amqp_server or vise versa.<br />
 </div>
 <p>You can use the following options with simple axis AMQP server.</p>
 <div class="source">
-<pre> -i IP where the Qpid broker is running, default IP is 127.0.0.1<br /> -p PORT port number the Qpid broker listens on, default port is 5672<br /> -r REPO_PATH repository path, default is ../<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical <br />	1 - errors <br />	2 - warnings<br /> 3 - information <br />	4 - debug <br />	5- user <br />	6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $WSFC_HOME/logs/axis2.log or axis2.log in current folder if WSFC_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
+<pre> -i IP where the Qpid broker is running, default IP is 127.0.0.1<br /> -p PORT port number the Qpid broker listens on, default port is 5672<br /> -r REPO_PATH repository path, default is ../<br /> -l LOG_LEVEL log level, available log levels:<br /> 0 - critical <br />	1 - errors <br />	2 - warnings<br /> 3 - information <br />	4 - debug <br />	5- user <br />	6 - trace<br /> Default log level is 4(debug).<br /> -f LOG_FILE log file, default is $AXIS2C_HOME/logs/axis2.log or axis2.log in current folder if AXIS2C_HOME not set<br /> -s LOG_FILE_SIZE Maximum log file size in mega bytes, default maximum size is 1MB.<br /> -h display the help screen.<br /><br /></pre>
 </div>
 <p>Example :</p>
 <div class="source">
-<pre> axis2_amqp_server -i 127.0.0.1 -p 5050 -r $WSFC_HOME -f /dev/stderr<br /><br /></pre>
+<pre> axis2_amqp_server -i 127.0.0.1 -p 5050 -r $AXIS2C_HOME -f /dev/stderr<br /><br /></pre>
 </div>
 </div>
 <div class="subsection">
@@ -2250,7 +2266,7 @@ When the axis2_amqp_server is up and running, you can run the sample
 clients in a new shell as follows.<br />
 <br />
 </p>
-<pre>$ cd ${WSFC_HOME}/samples/bin/amqp<br /><br />$ ./echo_blocking<br /></pre>
+<pre>$ cd ${AXIS2C_HOME}/samples/bin/amqp<br /><br />$ ./echo_blocking<br /></pre>
 This will invoke the echo service.<br />
 <br />
 To see the possible command line options for sample clients run them
@@ -2277,7 +2293,7 @@ For MS Windows systems, you can download it from <a href="http://www.zlatkovic.c
 <p>Next, you will have to build Axis2/C enabling Archive Based
 Deployment. On Linux, you need to set the <code>--with-archive=[path_to_zlib_headers]</code></p>
 <p>Example: <code><br />
-%./configure --with-archive=/usr/include/ --prefix=${WSFC_HOME}/deploy<br />
+%./configure --with-archive=/usr/include/ --prefix=${AXIS2C_HOME}/deploy<br />
 %make<br />
 %make install<br />
 </code></p>
@@ -2348,7 +2364,7 @@ using a source distribution, this may or may not be built for you by
 default. Thus, to get started, you may require building it from source.</p>
 <p>On Linux</p>
 <div class="source">
-<pre>	./configure --prefix=${WSFC_HOME} --enable-tests=no<br />	make<br /></pre>
+<pre>	./configure --prefix=${AXIS2C_HOME} --enable-tests=no<br />	make<br /></pre>
 </div>
 <p>On MS Windows</p>
 <div class="source">
@@ -2356,8 +2372,8 @@ default. Thus, to get started, you may require building it from source.</p>
 </div>
 <p>Please note that in most Linux based installations, this will
 most probably be built for you. Once you've done with the building
-process, you can find the executable at <code>${WSFC_HOME}/bin/tools</code>
-on Linux, or at <code>%WSFC_HOME%\bin\tools</code> on MS
+process, you can find the executable at <code>${AXIS2C_HOME}/bin/tools</code>
+on Linux, or at <code>%AXIS2C_HOME%\bin\tools</code> on MS
 Windows.</p>
 <p>By default, the TCPMon tool will listen on port <b><code>9090</code></b>
 and reply to port <b><code>8080</code></b>.
@@ -2915,7 +2931,7 @@ holds the service implementation</td>
 <tr class="a">
 <td>Path of static WSDL to be attached with service</td>
 <td>wsdl_path</td>
-<td>Absolute path or path relative to WSFC_HOME/bin</td>
+<td>Absolute path or path relative to AXIS2C_HOME/bin</td>
 </tr>
 <tr class="a">
 <td>Default HTTP Method used in a REST invocation</td>

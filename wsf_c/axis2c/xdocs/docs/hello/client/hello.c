@@ -59,7 +59,7 @@ main(
     endpoint_ref = axis2_endpoint_ref_create(env, address);
     axis2_options_set_to(options, env, endpoint_ref);
 
-    client_home = AXIS2_GETENV("WSFC_HOME");
+    client_home = AXIS2_GETENV("AXIS2C_HOME");
     if (!client_home || !strcmp(client_home, ""))
         client_home = "../..";
 

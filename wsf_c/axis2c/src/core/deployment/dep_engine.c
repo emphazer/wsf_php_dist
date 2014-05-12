@@ -565,6 +565,15 @@ axis2_dep_engine_free(
         axis2_repos_listener_free(dep_engine->repos_listener, env);
     }
 
+    if(dep_engine->module_dir)
+    {
+	AXIS2_FREE(env->allocator, dep_engine->module_dir);
+    }
+    if(dep_engine->svc_dir)
+    {
+	AXIS2_FREE(env->allocator, dep_engine->svc_dir);
+    }
+
     if(dep_engine)
     {
         AXIS2_FREE(env->allocator, dep_engine);
@@ -903,11 +912,15 @@ axis2_dep_engine_load_client(
             "No memory. Allocation for Axis2 Configuration failed");
         return NULL;
     }
+    axis2_conf_set_dep_engine(dep_engine->conf, env, dep_engine);
     dep_engine->conf_builder = axis2_conf_builder_create_with_file_and_dep_engine_and_conf(env,
         dep_engine->conf_name, dep_engine, dep_engine->conf);
 
     if(!(dep_engine->conf_builder))
     {
+        /* Set the dep_engine to NULL before freeing conf in order to
+         avoid deleting it twice*/
+        axis2_conf_set_dep_engine(dep_engine->conf,env,NULL);
         axis2_conf_free(dep_engine->conf, env);
         dep_engine->conf = NULL;
     }
@@ -923,6 +936,9 @@ axis2_dep_engine_load_client(
     status = axis2_conf_builder_populate_conf(dep_engine->conf_builder, env);
     if(AXIS2_SUCCESS != status)
     {
+        /* Set the dep_engine to NULL before freeing conf in order to
+         avoid deleting it twice*/
+        axis2_conf_set_dep_engine(dep_engine->conf,env,NULL);
         axis2_conf_free(dep_engine->conf, env);
         dep_engine->conf = NULL;
         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Populating Axis2 Configuration failed");
@@ -932,6 +948,9 @@ axis2_dep_engine_load_client(
     status = axis2_dep_engine_set_svc_and_module_dir_path(dep_engine, env);
     if(AXIS2_SUCCESS != status)
     {
+        /* Set the dep_engine to NULL before freeing conf in order to
+              avoid deleting it twice*/
+        axis2_conf_set_dep_engine(dep_engine->conf,env,NULL);
         axis2_conf_free(dep_engine->conf, env);
         dep_engine->conf = NULL;
         AXIS2_LOG_ERROR(env->log, AXIS2_LOG_SI, "Setting service and module paths failed");
@@ -960,6 +979,9 @@ axis2_dep_engine_load_client(
     if(AXIS2_SUCCESS != status)
     {
         axis2_repos_listener_free(dep_engine->repos_listener, env);
+        /* Set the dep_engine to NULL before freeing conf in order to
+              avoid deleting it twice*/
+        axis2_conf_set_dep_engine(dep_engine->conf,env,NULL);
         axis2_conf_free(dep_engine->conf, env);
         dep_engine->conf = NULL;
         AXIS2_ERROR_SET(env->error, AXIS2_ERROR_MODULE_VALIDATION_FAILED, AXIS2_FAILURE);
@@ -1789,7 +1811,7 @@ axis2_dep_engine_build_module(
             module->handler_create_func_map);
     }
 
-    dep_engine->curr_file = NULL;
+    /*dep_engine->curr_file = NULL;*/
 
     return module_desc;
 }
@@ -1965,7 +1987,7 @@ axis2_dep_engine_set_svc_and_module_dir_path(
             dirpath = (axis2_char_t *)axutil_param_get_value(dep_param, env);
             if(dirpath)
             {
-                dep_engine->module_dir = dirpath;
+                dep_engine->module_dir = axutil_strdup(env, dirpath);
                 dirpath = NULL;
             }
         }
@@ -1977,7 +1999,7 @@ axis2_dep_engine_set_svc_and_module_dir_path(
             dirpath = (axis2_char_t *)axutil_param_get_value(dep_param, env);
             if(dirpath)
             {
-                dep_engine->svc_dir = dirpath;
+                dep_engine->svc_dir = axutil_strdup(env, dirpath);
                 dirpath = NULL;
             }
         }

@@ -1565,6 +1565,14 @@ axiom_element_set_is_empty(
     om_element->is_empty = is_empty;
 }
 
+AXIS2_EXTERN axis2_bool_t AXIS2_CALL
+axiom_element_get_is_empty(
+    axiom_element_t * om_element,
+    const axutil_env_t * env)
+{
+    return om_element->is_empty;
+}
+
 /**
  * This method will declare the namespace without checking whether it is already declared. 
  * (This method is only used by codegen. We have to remove this method in future)
@@ -1655,7 +1663,7 @@ axiom_element_build(
     }
     return AXIS2_SUCCESS;
 }
-
+#endif
 /**
  * checks for the namespace in the context of this element
  * with the given prefix
@@ -1859,14 +1867,6 @@ axiom_element_create_str(
     return element;
 }
 
-AXIS2_EXTERN axis2_bool_t AXIS2_CALL
-axiom_element_get_is_empty(
-    axiom_element_t * om_element,
-    const axutil_env_t * env)
-{
-    return om_element->is_empty;
-}
-
 AXIS2_EXTERN axis2_status_t AXIS2_CALL
 axiom_element_remove_attribute(
     axiom_element_t * om_element,
@@ -1899,4 +1899,4 @@ axiom_element_to_string(
 {
     return axiom_node_to_string(element_node, env);
 }
-#endif
+

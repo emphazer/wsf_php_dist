@@ -1,3 +1,17 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 #######################################################################################
 ## This is the make file for Axis2/C  						       					   
 #									                                                   
@@ -130,6 +144,14 @@ AXIS2_INCLUDE_PATH = $(AXIS2_INCLUDE_PATH) /I$(OPENSSL_BIN_DIR)\include
 AXIS2_INCLUDE_PATH = $(AXIS2_INCLUDE_PATH) /I$(LIBCURL_BIN_DIR)\include
 !endif
 
+
+!if "$(ENABLE_NTLM_WITH_HEIMDAL)" == "1"
+AXIS2_INCLUDE_PATH = $(AXIS2_INCLUDE_PATH) /I$(OPENSSL_BIN_DIR)\include /I$(HEIMDAL_BIN_DIR)\inc
+!endif
+!if "$(ENABLE_NTLM_WITH_LIBNTLM)" == "1"
+AXIS2_INCLUDE_PATH = $(AXIS2_INCLUDE_PATH) /I$(LIBNTLM_BIN_DIR)\include
+!endif
+
 # Compiler Options
 ###################
 
@@ -152,6 +174,14 @@ CFLAGS = $(CFLAGS) /D "AXIS2_LIBXML2_ENABLED" $(LIBXML2_INCLUDE_PATH)
 !else
 CFLAGS = $(CFLAGS) /D "AXIS2_GUTHTHILA_ENABLED" $(GUTHTHILA_INCLUDE_PATH)
 !endif
+
+!if "$(ENABLE_NTLM_WITH_HEIMDAL)" == "1"
+CFLAGS = $(CFLAGS) /D "AXIS2_NTLM_ENABLED"
+!endif
+!if "$(ENABLE_NTLM_WITH_LIBNTLM)" == "1"
+CFLAGS = $(CFLAGS) /D "AXIS2_NTLM_ENABLED"
+!endif
+
 
 # Linker Options
 ####################
@@ -176,6 +206,16 @@ LIBS = $(LIBS) libcurl_imp.lib
 APACHE_LIBS = apr.lib xml.lib libhttpd.lib libaprutil.lib libapr.lib
 !else
 APACHE_LIBS = apr-1.lib xml.lib libhttpd.lib libapr-1.lib libaprutil-1.lib
+!endif
+
+!if "$(ENABLE_NTLM_WITH_HEIMDAL)" == "1"
+LDFLAGS = $(LDFLAGS) /LIBPATH:$(HEIMDAL_BIN_DIR)\lib /LIBPATH:$(OPENSSL_BIN_DIR)\lib\VC
+LIBS = $(LIBS) libheimntlm.lib libeay32MD.lib ssleay32MD.lib 
+!endif
+
+!if "$(ENABLE_NTLM_WITH_LIBNTLM)" == "1"
+LDFLAGS = $(LDFLAGS) /LIBPATH:$(LIBNTLM_BIN_DIR)\lib
+LIBS = $(LIBS) libntlm.a
 !endif
 
 # Manifest Options
@@ -215,7 +255,6 @@ deploy:
 	@if not exist $(AXIS2_INCLUDE) mkdir $(AXIS2_INCLUDE)
 	@if not exist $(AXIS2_LOG) mkdir $(AXIS2_LOG)
 	@if not exist $(AXIS2_MODULES)\addressing mkdir $(AXIS2_MODULES)\addressing
-			
 	@if not exist $(AXIS2_INTDIR) mkdir $(AXIS2_INTDIR)
 	@if not exist $(AXIS2_INTDIR_SAMPLES) mkdir $(AXIS2_INTDIR_SAMPLES)
 	
@@ -614,6 +653,9 @@ HTTP_SENDER_SRC = $(AXIS2_SOURCE_DIR)\src\core\transport\http\sender
 HTTP_SENDER_INTDIR = $(AXIS2_INTDIR)\http_sender
 HTTP_SENDER_INTDIR1 = $(AXIS2_INTDIR)\http_sender\ssl
 HTTP_SENDER_INTDIR2 = $(AXIS2_INTDIR)\http_sender\libcurl
+HTTP_SENDER_INTDIR3 = $(AXIS2_INTDIR)\http_sender\ntlm
+HTTP_SENDER_INTDIR4 = $(AXIS2_INTDIR)\http_sender\ntlm\heimdal
+HTTP_SENDER_INTDIR5 = $(AXIS2_INTDIR)\http_sender\ntlm\libntlm
 
 HTTP_SENDER_OBJS = $(HTTP_SENDER_INTDIR)\*.obj
 
@@ -626,6 +668,15 @@ $(HTTP_SENDER_INTDIR1) :
 $(HTTP_SENDER_INTDIR2) :
 	@if not exist $(HTTP_SENDER_INTDIR2) mkdir $(HTTP_SENDER_INTDIR2)
 
+$(HTTP_SENDER_INTDIR3) :
+	@if not exist $(HTTP_SENDER_INTDIR3) mkdir $(HTTP_SENDER_INTDIR3)
+
+$(HTTP_SENDER_INTDIR4) :
+	@if not exist $(HTTP_SENDER_INTDIR4) mkdir $(HTTP_SENDER_INTDIR4)
+
+$(HTTP_SENDER_INTDIR5) :
+	@if not exist $(HTTP_SENDER_INTDIR5) mkdir $(HTTP_SENDER_INTDIR5)
+
 {$(HTTP_SENDER_SRC)}.c{$(HTTP_SENDER_INTDIR)}.obj ::
 	$(CC) $(CFLAGS) /Fo$(HTTP_SENDER_INTDIR)\ /c $<
 
@@ -635,27 +686,71 @@ $(HTTP_SENDER_INTDIR2) :
 {$(HTTP_SENDER_SRC)\libcurl}.c{$(HTTP_SENDER_INTDIR2)}.obj ::
 	$(CC) $(CFLAGS) /Fo$(HTTP_SENDER_INTDIR2)\ /c $<
 
+{$(HTTP_SENDER_SRC)\ntlm}.c{$(HTTP_SENDER_INTDIR3)}.obj ::
+	$(CC) $(CFLAGS) /Fo$(HTTP_SENDER_INTDIR3)\ /c $<
+
+
+{$(HTTP_SENDER_SRC)\ntlm\heimdal}.c{$(HTTP_SENDER_INTDIR4)}.obj ::
+	$(CC) $(CFLAGS) /Fo$(HTTP_SENDER_INTDIR4)\ /c $<
+
+{$(HTTP_SENDER_SRC)\ntlm\libntlm}.c{$(HTTP_SENDER_INTDIR5)}.obj ::
+	$(CC) $(CFLAGS) /Fo$(HTTP_SENDER_INTDIR5)\ /c $<
+
 !if "$(ENABLE_SSL)" == "1"
 !if "$(ENABLE_LIBCURL)" == "1"
 HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
-	      $(HTTP_SENDER_INTDIR1)\*.obj \
-		  $(HTTP_SENDER_INTDIR2)\*.obj
+		$(HTTP_SENDER_INTDIR1)\*.obj \
+		$(HTTP_SENDER_INTDIR3)\*.obj \
+		$(HTTP_SENDER_INTDIR2)\*.obj
 
-$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR1) $(HTTP_SENDER_INTDIR2)
+$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR1) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR2)
+!elseif "$(ENABLE_NTLM_WITH_HEIMDAL)" == "1"
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR1)\*.obj \
+	$(HTTP_SENDER_INTDIR3)\*.obj \
+	$(HTTP_SENDER_INTDIR4)\*.obj 
+
+$(HTTP_SENDER_OBJS) :$(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR1) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR4)
+!elseif "$(ENABLE_NTLM_WITH_LIBNTLM)" == "1"
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR1)\*.obj \
+	$(HTTP_SENDER_INTDIR3)\*.obj \
+	$(HTTP_SENDER_INTDIR5)\*.obj
+$(HTTP_SENDER_OBJS) :$(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR1) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR5)
 !else
 HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
-	      $(HTTP_SENDER_INTDIR1)\*.obj
+	$(HTTP_SENDER_INTDIR1)\*.obj \
+	$(HTTP_SENDER_INTDIR3)\*.obj 
 
-$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR1)
+$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR1)
 !endif
-!elseif "$(ENABLE_LIBCURL)" == "1"
-HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
-	      $(HTTP_SENDER_INTDIR2)\*.obj 
-
-$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR2)
 !else
-$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR)
+!if "$(ENABLE_LIBCURL)" == "1"
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR2)\*.obj \
+	$(HTTP_SENDER_INTDIR3)\*.obj 
+	
+$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR2)
+!elseif "$(ENABLE_NTLM_WITH_HEIMDAL)" == "1"
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR3)\*.obj \
+	$(HTTP_SENDER_INTDIR4)\*.obj 
+
+$(HTTP_SENDER_OBJS) :$(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR4)
+!elseif "$(ENABLE_NTLM_WITH_LIBNTLM)" == "1"
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR3)\*.obj \
+	$(HTTP_SENDER_INTDIR5)\*.obj 
+
+$(HTTP_SENDER_OBJS) :$(HTTP_SENDER_INTDIR) $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR5)
+!else
+HTTP_SENDER_OBJS = $(HTTP_SENDER_OBJS) \
+	$(HTTP_SENDER_INTDIR3)\*.obj 
+
+$(HTTP_SENDER_OBJS) : $(HTTP_SENDER_INTDIR3) $(HTTP_SENDER_INTDIR)
 !endif
+!endif
+
 
 $(AXIS2_LIBS)\$(AXIS2_HTTP_SENDER).dll : $(HTTP_SENDER_OBJS)
 	$(LD) $(LDFLAGS) $(HTTP_SENDER_OBJS) $(AXUTIL).lib \
@@ -1022,6 +1117,55 @@ $(AXIS2_SERVICES)\math\math.dll  : $(MATH_OBJS)
 
 axis2_services_math: $(AXIS2_SERVICES)\math\math.dll
 
+### session
+
+SESSION_SRC =  $(AXIS2_SOURCE_DIR)\samples\server\session
+SESSION_INTDIR = $(AXIS2_INTDIR_SAMPLES)\services\session
+
+SESSION_OBJS = $(SESSION_INTDIR)\*.obj
+
+$(SESSION_INTDIR) :
+	@if not exist $(SESSION_INTDIR) mkdir $(SESSION_INTDIR)
+	@if not exist $(AXIS2_SERVICES)\session mkdir $(AXIS2_SERVICES)\session
+
+{$(SESSION_SRC)}.c{$(SESSION_INTDIR)}.obj ::
+	$(CC) $(CFLAGS) /Fo$(SESSION_INTDIR)\ /c $<
+
+$(SESSION_OBJS) : $(SESSION_INTDIR)
+
+$(AXIS2_SERVICES)\session\session.dll  : $(SESSION_OBJS)
+	$(LD) $(LDFLAGS) $(SESSION_OBJS) $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib /DLL /OUT:$(AXIS2_SERVICES)\session\session.dll 
+	-@$(_VC_MANIFEST_EMBED_DLL)
+	@copy $(AXIS2_SOURCE_DIR)\samples\server\session\services.xml $(AXIS2_SERVICES)\session
+
+axis2_services_session: $(AXIS2_SERVICES)\session\session.dll
+
+
+### version
+
+VERSION_SRC =  $(AXIS2_SOURCE_DIR)\samples\server\version
+VERSION_INTDIR = $(AXIS2_INTDIR_SAMPLES)\services\version
+
+VERSION_OBJS = $(VERSION_INTDIR)\*.obj
+
+$(VERSION_INTDIR) :
+	@if not exist $(VERSION_INTDIR) mkdir $(VERSION_INTDIR)
+	@if not exist $(AXIS2_SERVICES)\version mkdir $(AXIS2_SERVICES)\version
+
+{$(VERSION_SRC)}.c{$(VERSION_INTDIR)}.obj ::
+	$(CC) $(CFLAGS) /Fo$(VERSION_INTDIR)\ /c $<
+
+$(VERSION_OBJS) : $(VERSION_INTDIR)
+
+$(AXIS2_SERVICES)\version\version.dll  : $(VERSION_OBJS)
+	$(LD) $(LDFLAGS) $(VERSION_OBJS) $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib /DLL /OUT:$(AXIS2_SERVICES)\version\version.dll 
+	-@$(_VC_MANIFEST_EMBED_DLL)
+	@copy $(AXIS2_SOURCE_DIR)\samples\server\version\services.xml $(AXIS2_SERVICES)\version
+
+axis2_services_version: $(AXIS2_SERVICES)\version\version.dll
+
 ### mtom
 
 MTOM_SRC =  $(AXIS2_SOURCE_DIR)\samples\server\mtom
@@ -1148,6 +1292,8 @@ AXIS2_INTDIR_CLI = $(AXIS2_INTDIR)\samples\clients
 axis2_clients_intdir:
 	@if not exist $(AXIS2_BINDIR)\samples\bin mkdir $(AXIS2_BINDIR)\samples\bin
 	@if not exist $(AXIS2_INTDIR_CLI)\math mkdir $(AXIS2_INTDIR_CLI)\math
+	@if not exist $(AXIS2_INTDIR_CLI)\session mkdir $(AXIS2_INTDIR_CLI)\session
+	@if not exist $(AXIS2_INTDIR_CLI)\version mkdir $(AXIS2_INTDIR_CLI)\version
 	@if not exist $(AXIS2_INTDIR_CLI)\echo mkdir $(AXIS2_INTDIR_CLI)\echo
 	@if not exist $(AXIS2_INTDIR_CLI)\dyn_cli mkdir $(AXIS2_INTDIR_CLI)\dyn_cli
 	@if not exist $(AXIS2_INTDIR_CLI)\gslc mkdir $(AXIS2_INTDIR_CLI)\gslc
@@ -1155,6 +1301,8 @@ axis2_clients_intdir:
 	@if not exist $(AXIS2_INTDIR_CLI)\notify mkdir $(AXIS2_INTDIR_CLI)\notify
 	@if not exist $(AXIS2_INTDIR_CLI)\mtom mkdir $(AXIS2_INTDIR_CLI)\mtom
 	@if not exist $(AXIS2_INTDIR_CLI)\mtom_callback mkdir $(AXIS2_INTDIR_CLI)\mtom_callback
+	@if not exist $(AXIS2_INTDIR_CLI)\ntlm mkdir $(AXIS2_INTDIR_CLI)\ntlm
+	@if not exist $(AXIS2_INTDIR_CLI)\ntlm_postcheck mkdir $(AXIS2_INTDIR_CLI)\ntlm_postcheck
 
 AXIS2_SAMPLES_BIN = $(AXIS2_BINDIR)\samples\bin
 
@@ -1165,6 +1313,23 @@ $(AXIS2_SAMPLES_BIN)\math.exe :
 	-@$(_VC_MANIFEST_EMBED_EXE)
 
 axis2_client_math: $(AXIS2_SAMPLES_BIN)\math.exe
+
+$(AXIS2_SAMPLES_BIN)\session.exe :
+	$(CC) $(CFLAGS) $(AXIS2_SOURCE_DIR)\samples\client\session\*.c /Fo$(AXIS2_INTDIR_CLI)\session\ /c
+	$(LD) $(LDFLAGS) /FIXED:No $(AXIS2_INTDIR_CLI)\session\*.obj $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib  /OUT:$(AXIS2_SAMPLES_BIN)\session.exe
+	-@$(_VC_MANIFEST_EMBED_EXE)
+
+axis2_client_session: $(AXIS2_SAMPLES_BIN)\session.exe
+
+
+$(AXIS2_SAMPLES_BIN)\version.exe :
+	$(CC) $(CFLAGS) $(AXIS2_SOURCE_DIR)\samples\client\version\*.c /Fo$(AXIS2_INTDIR_CLI)\version\ /c
+	$(LD) $(LDFLAGS) /FIXED:No $(AXIS2_INTDIR_CLI)\version\*.obj $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib  /OUT:$(AXIS2_SAMPLES_BIN)\version.exe
+	-@$(_VC_MANIFEST_EMBED_EXE)
+
+axis2_client_version: $(AXIS2_SAMPLES_BIN)\version.exe
 
 $(AXIS2_SAMPLES_BIN)\echo.exe :
 	$(CC) $(CFLAGS) $(AXIS2_SOURCE_DIR)\samples\client\echo\echo.c /Fo$(AXIS2_INTDIR_CLI)\echo\ /c
@@ -1217,6 +1382,26 @@ $(AXIS2_SAMPLES_BIN)\mtom_callback.exe :
 	-@$(_VC_MANIFEST_EMBED_EXE)
 
 axis2_client_mtom_callback: $(AXIS2_SAMPLES_BIN)\mtom_callback.exe
+
+
+$(AXIS2_SAMPLES_BIN)\ntlm.exe :
+	$(CC) $(CFLAGS) $(AXIS2_SOURCE_DIR)\samples\client\ntlm\ntlm_post.c \
+	$(AXIS2_SOURCE_DIR)\samples\client\ntlm\ntlm_util.c /Fo$(AXIS2_INTDIR_CLI)\ntlm\ /c
+	$(LD) $(LDFLAGS) /FIXED:No $(AXIS2_INTDIR_CLI)\ntlm\*.obj $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib  /OUT:$(AXIS2_SAMPLES_BIN)\ntlm.exe
+	-@$(_VC_MANIFEST_EMBED_EXE)
+	
+axis2_client_ntlm: $(AXIS2_SAMPLES_BIN)\ntlm.exe
+
+
+$(AXIS2_SAMPLES_BIN)\ntlm_postcheck.exe :
+	$(CC) $(CFLAGS) $(AXIS2_SOURCE_DIR)\samples\client\ntlm\ntlm_post_with_check.c \
+	$(AXIS2_SOURCE_DIR)\samples\client\ntlm\ntlm_util.c /Fo$(AXIS2_INTDIR_CLI)\ntlm_postcheck\ /c
+	$(LD) $(LDFLAGS) /FIXED:No $(AXIS2_INTDIR_CLI)\ntlm_postcheck\*.obj $(AXUTIL).lib $(AXIOM).lib \
+	$(AXIS2_PARSER).lib $(LIBS) $(AXIS2_ENGINE).lib  /OUT:$(AXIS2_SAMPLES_BIN)\ntlm_postcheck.exe
+	-@$(_VC_MANIFEST_EMBED_EXE)
+	
+axis2_client_ntlmpost: $(AXIS2_SAMPLES_BIN)\ntlm_postcheck.exe
 
 axis2_client_userguide_int:
 	@if not exist $(AXIS2_INTDIR)\userguide\echo_blocking mkdir $(AXIS2_INTDIR)\userguide\echo_blocking
@@ -1398,9 +1583,11 @@ mv_dist:
 	@xcopy /Y /E /I deploy $(AXIS2_RELEASE_DIR)
 
 
-all_services: axis2_services_echo axis2_services_math axis2_services_notify axis2_services_sg_math axis2_services_mtom axis2_services_mtom_callback axis2_services_calculator 
+all_services: axis2_services_echo axis2_services_math axis2_services_session axis2_services_version axis2_services_notify axis2_services_sg_math axis2_services_mtom axis2_services_mtom_callback axis2_services_calculator 
 
-all_clients: axis2_clients_intdir axis2_client_echo axis2_client_math  axis2_client_google_spell axis2_client_yahoo axis2_client_notify axis2_client_mtom axis2_client_mtom_callback axis2_client_userguide 
+all_clients_with_ntml: axis2_client_ntlm axis2_client_ntlmpost
+
+all_clients: axis2_clients_intdir axis2_client_echo axis2_client_math axis2_client_session axis2_client_version axis2_client_google_spell axis2_client_yahoo axis2_client_notify axis2_client_mtom axis2_client_mtom_callback axis2_client_userguide
 
 all_callback: axis2_mtom_sending_callback axis2_mtom_caching_callback
 axis2_samples: axis2_mod_log all_services all_clients all_callback
@@ -1448,7 +1635,10 @@ all: build
 
 install: all copy_extra copy_wsdl2c
 
-dist: install axis2_apache_module axis2_IIS_module axis2_cgi tcpmon copy_samples copy_vc_projects clean_manifest mv_dist
+dist: install  axis2_apache_module axis2_IIS_module axis2_cgi tcpmon copy_samples copy_vc_projects clean_manifest mv_dist
+
+dist_with_ntlm: install axis2_clients_with_ntlm  axis2_apache_module axis2_IIS_module axis2_cgi tcpmon copy_samples copy_vc_projects clean_manifest mv_dist
+
 
 dist_as_lib : deploy axis2_core_without_server copy_axis2_xml copy_include clean_manifest mv_dist
 	

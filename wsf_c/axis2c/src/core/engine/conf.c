@@ -1426,7 +1426,7 @@ axis2_conf_engage_module(
         axutil_param_t *module_dir_param = NULL;
         axis2_char_t *module_dir = NULL;
         axis2_bool_t flag;
-        axis2_char_t *axis2_xml = NULL;
+        /*axis2_char_t *axis2_xml = NULL;*/
 
         file_name = axutil_qname_get_localpart(module_ref, env);
         file = (axutil_file_t *)axis2_arch_reader_create_module_arch(env, file_name);
@@ -1450,7 +1450,7 @@ axis2_conf_engage_module(
             /**
              * This case is to obtain module path from the axis2.xml
              */
-            axis2_xml = (axis2_char_t *)axis2_conf_get_axis2_xml(conf, env);
+            /* axis2_xml = (axis2_char_t *)axis2_conf_get_axis2_xml(conf, env);*/
             module_dir_param = axis2_conf_get_param(conf, env, AXIS2_MODULE_DIR);
 
             if(module_dir_param)
@@ -1471,14 +1471,15 @@ axis2_conf_engage_module(
 
         axutil_file_set_path(file, env, path);
         file_data = axis2_arch_file_data_create_with_type_and_file(env, AXIS2_MODULE, file);
-        if(!flag)
+        /*if(!flag)
         {
             dep_engine = axis2_dep_engine_create_with_repos_name(env, repos_path);
         }
         else
         {
             dep_engine = axis2_dep_engine_create_with_axis2_xml(env, axis2_xml);
-        }
+        }*/
+        dep_engine = conf->dep_engine;
 
         axis2_dep_engine_set_current_file_item(dep_engine, env, file_data);
 
@@ -1607,6 +1608,14 @@ axis2_conf_set_axis2_xml(
     AXIS2_PARAM_CHECK(env->error, axis2_xml, AXIS2_FAILURE);
     conf->axis2_xml = axutil_strdup(env, axis2_xml);
     return AXIS2_SUCCESS;
+}
+
+AXIS2_EXTERN struct axis2_dep_engine * AXIS2_CALL
+axis2_conf_get_dep_engine(
+    axis2_conf_t * conf,
+    const axutil_env_t * env)
+{
+    return conf->dep_engine;
 }
 
 AXIS2_EXTERN axis2_status_t AXIS2_CALL
@@ -1869,12 +1878,12 @@ axis2_conf_disengage_module(
 	{
 		axis2_svc_t *svc = NULL;
 		void *v = NULL;
-		const axis2_char_t *svc_name = NULL;
+		/*const axis2_char_t *svc_name = NULL; */
 		axutil_hash_this(index, NULL, NULL, &v);
 		svc = (axis2_svc_t *)v;
 		if(svc)
 		{
-			svc_name = axis2_svc_get_name(svc, env);
+			/*svc_name = axis2_svc_get_name(svc, env); */
 			axis2_svc_disengage_module(svc, env, module_desc,(axis2_conf_t*) conf);				
 		}
 	}
@@ -1893,3 +1902,4 @@ axis2_conf_disengage_module(
 
 	return AXIS2_FAILURE;
 }
+

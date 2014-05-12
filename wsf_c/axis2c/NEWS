@@ -1,7 +1,7 @@
 Apache Axis2/C Team is pleased to announce the release of Apache Axis2/C 
 version 1.7.0.
 
-You can download this release from http://ws.apache.org/axis2/c/download.cgi
+You can download this release from http://axis.apache.org/axis2/c/core/download.cgi
 
 Key Features
 ============
@@ -77,17 +77,19 @@ Key Features
 
   21. WS-Policy implementation called Neethi/C, with WS-SecurityPolicy extension
 
+  22. HTTP KeepAlive support.
+
+  23. HTTP session handling.
+
 
 Major Changes Since Last Release
 ================================
 
-   1. XPath support for Axiom XML object model
-   2. CGI support
-   3. Improvements to MTOM to send, receive very large attachments
-   4. Improvements to AMQP transport
-   5. Improvements to WSDL2C codegen tool  
-   6. Many bug fixes.
-   7. Memory leak fixes
+   1. Preformance improvements to guththila parser. 
+   2. HTTP Session support
+   3. HTTP Keep Alive support
+   4. Improvments to Axiom/C
+   5. Many bug fixes. 
 
 We welcome your early feedback on this implementation.
 
